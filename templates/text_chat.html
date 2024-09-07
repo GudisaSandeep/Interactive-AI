@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Chat</title>
+    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
+        style="border-radius: 50%;">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #f1f1f1;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-gray-800 {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .bg-blue-600 {
+            background: #1E3A8A;
+        }
+
+        .bg-blue-600:hover {
+            background: #1D4ED8;
+        }
+
+        .response-animation {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sans">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+            <a href="{{ url_for('home') }}">
+                <img alt="Logo" class="mr-2" height="40"
+                    src="{{ url_for('static', filename='Images/Interactive AI.png') }}" width="40"
+                    style="border-radius: 50px;" />
+            </a>
+            <span class="text-lg font-semibold text-blue-400">Interactive AI</span>
+        </div>
+        <nav class="flex space-x-4">
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
+                Summarization</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-10 px-4 py-6">
+        <h1 class="text-center text-3xl font-bold mb-8 text-blue-300">Text Chat</h1>
+        <form id="text-chat-form" method="post"
+            class="max-w-lg mx-auto bg-gray-800 p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+            <div class="mb-4">
+                <label for="text" class="block text-lg font-semibold">Enter your text:</label>
+                <input type="text"
+                    class="form-input mt-2 w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring focus:ring-gray-500"
+                    id="text" name="text" required>
+            </div>
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold">Send</button>
+        </form>
+        <div id="response" class="mt-8 text-center response-animation"></div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $('#text-chat-form').on('submit', function (event) {
+            event.preventDefault();
+            $.post('/text-chat', $(this).serialize(), function (data) {
+                $('#response').html('<strong>You:</strong> ' + data.You + '<br><strong>Assistant:</strong> ' + data.Assistant);
+            });
+        });
+    </script>
+
+    <!-- Footer -->
+<footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="container mx-auto text-center">
+        <!-- Company Description -->
+        <p class="mb-6 text-lg font-light text-gray-300">
+            &copy; 2024 We are learning and building innovative AI Tools to shape the future.
+        </p>
+
+        <!-- Links Section -->
+        <div class="flex justify-center space-x-8 mb-6">
+            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Support Our Work</a>
+            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Contact Us</a>
+        </div>
+
+        <!-- Social Media Icons -->
+        <div class="flex justify-center space-x-6 mb-8">
+            <a href="#" aria-label="Facebook" class="hover:text-white transition duration-300">
+                <i class="fab fa-facebook text-xl"></i>
+            </a>
+            <a href="#" aria-label="Twitter" class="hover:text-white transition duration-300">
+                <i class="fab fa-twitter text-xl"></i>
+            </a>
+            <a href="#" aria-label="LinkedIn" class="hover:text-white transition duration-300">
+                <i class="fab fa-linkedin text-xl"></i>
+            </a>
+            <a href="#" aria-label="GitHub" class="hover:text-white transition duration-300">
+                <i class="fab fa-github text-xl"></i>
+            </a>
+        </div>
+
+        <!-- Developer Profile -->
+        <div class="flex justify-center items-center space-x-6">
+            <img src="{{ url_for('static', filename='Images/Deveveloper.jpg') }}" alt="Sandeep Gudisa"
+                class="w-32 h-32 rounded-full border-4 border-gray-600 shadow-lg">
+            <div class="text-left">
+                <p class="text-white text-lg font-semibold">Sandeep Gudisa</p>
+                <p class="text-gray-400 text-sm">Enthusiastic Student Developer specializing in AI, ML, DL, and
+                    innovative solutions.</p>
+                <a href="https://www.linkedin.com/in/sandeep-gudisa/" class="text-blue-400 hover:underline text-sm">View Profile</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+
+</html>

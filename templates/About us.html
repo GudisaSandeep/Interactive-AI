@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive AI</title>
+    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon" style="border-radius: 50%;">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+            color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Header Styling */
+        header {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        
+        .nav {
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav li {
+            margin: 0 15px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1.1rem;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .nav a:hover {
+            color: #00aaff;
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.9) 100%);
+            padding: 60px 20px;
+            color: #fff;
+            box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.3);
+            perspective: 1000px;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+            transform: rotateY(0deg);
+            transition: transform 0.5s;
+        }
+
+        .hero-section p {
+            font-size: 1.3rem;
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* About Us Section */
+        .about-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 1200px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .about-section img {
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 5px solid #00aaff;
+            box-shadow: 0 0 25px rgba(0, 170, 255, 0.7);
+            transform: rotateX(10deg);
+        }
+
+        .about-section h2 {
+            font-size: 2.5rem;
+            color: #00aaff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+        }
+
+        .about-section p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        /* Video Section */
+        .video-section {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 1200px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-section h2 {
+            font-size: 2.5rem;
+            color: #00aaff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+        }
+
+        .video-section video {
+            width: 100%;
+            height: auto;
+            max-width: 800px;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 170, 255, 0.7);
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 1200px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .gallery-section h2 {
+            font-size: 2.5rem;
+            color: #00aaff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transform: rotateY(5deg);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .gallery-item .description {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* Social Icons */
+        .social-icons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .social-icons a {
+            text-decoration: none;
+            margin: 0 15px;
+            color: #00aaff;
+            font-size: 1.5rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: #f1f1f1;
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        /* Footer Styling */
+        footer {
+            background: rgba(0, 0, 0, 0.7);
+            color: #f1f1f1;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+        }
+
+        footer a {
+            color: #00aaff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #f1f1f1;
+        }
+
+        /* Media Queries */
+        @media (min-width: 768px) {
+            .about-section {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
+
+            .about-section img {
+                margin-right: 50px;
+                transform: rotateX(0deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <header class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+            <a href="{{ url_for('home') }}">
+                <img alt="Logo" class="mr-2" height="40" src="{{ url_for('static', filename='Images/Interactive AI.png') }}"
+                    width="40" style="border-radius: 50px;" />
+            </a>
+            <h1 class="text-2xl font-bold text-white">Interactive AI</h1>
+        </div>
+        <nav class="flex space-x-4">
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
+                Summarization</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1>Welcome to Interactive AI</h1>
+        <p>Your gateway to the future of artificial intelligence.</p>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="about-section">
+        <img src="{{ url_for('static', filename='Images/Deveveloper.jpg') }}" alt="About Us">
+        <div>
+            <h2>About Me</h2>
+            <p>Welcome to Interactive AI, where we push the boundaries of artificial intelligence. Our mission is to
+                create innovative solutions that bridge the gap between science fiction and reality. Join us on this
+                exciting journey as we explore new frontiers in AI.</p>
+            <h2>Sandeep Gudisa</h2>
+            <p>Hello! I’m Sandeep Gudisa, a passionate student developer focused on building AI/ML/DL applications. My
+                work at Microsoft as an intern has involved designing a Smart Reviews System Portal for students. This
+                portal utilizes Azure AI services to showcase free courses and provide reviews, enhancing the learning
+                experience for students.</p>
+            
+            <h3>Achievements</h3>
+            <p>In addition to my internship, I was recognized for developing an AI assistant designed to assist blind
+                people. This achievement received significant media attention, including features in newspapers and a
+                telecast on ETV channel, highlighting its impact and innovation.</p>
+            
+            <h3>Our Mission</h3>
+            <p>We are committed to leveraging cutting-edge technology to create impactful AI solutions. Our projects aim
+                to solve real-world problems and make technology accessible to everyone.</p>
+            
+            <h3>Our Journey</h3>
+            <p>Having participated in various competitions and internships, our team has continually pushed the boundaries of what’s
+                possible in AI. We’re dedicated to exploring new frontiers and delivering transformative solutions to the tech
+                community.</p>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section">
+        <h2>Introduction About Me</h2>
+        <video controls>
+            <source src="{{ url_for('static', filename='videos/About me.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+        <h2>Gallery</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='Images/Microsoft Internship Certificate 2.jpg') }}" alt="Gallery Image 1">
+                <div class="description">Microsoft Internship</div>
+            </div>
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='Images/Agile Course Completetion Certificate.png') }}" alt="Gallery Image 2">
+                <div class="description">Infosys Agile Course</div>
+            </div>
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='Images/Divyangan_certificate.jpg') }}"
+                    alt="Gallery Image 2">
+                <div class="description">Divyangan Certificate</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Interactive AI. All rights reserved. <br>
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </p>
+        <div class="social-icons">
+            <a href="https://www.linkedin.com/in/sandeep-gudisa/" class="fab fa-linkedin-in" aria-label="LinkedIn"></a>
+            <a href="https://github.com/GudisaSandeep" class="fab fa-github" aria-label="GitHub"></a>
+            <a href="https://www.youtube.com/@AIProgrammingTelugu" class="fab fa-youtube" aria-label="YouTube"></a>
+        </div>
+
+    </footer>
+
+</body>
+
+</html>

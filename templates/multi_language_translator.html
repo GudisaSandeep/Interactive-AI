@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive AI - Sci-Fi Edition</title>
+    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
+        style="border-radius: 50%;">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            background-color: #1f2937;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background-color: #34d399;
+            /* Green button */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            background-color: #059669;
+        }
+
+        .btn-alt {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-alt:hover {
+            background-color: #1d4ed8;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        h2 {
+            color: #ffffff;
+        }
+
+        .tab {
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .column {
+            background-color: #1f2937;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 48%;
+            margin-bottom: 20px;
+        }
+
+        audio {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-400">
+    <header class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+            <a href="{{ url_for('home') }}">
+                <img alt="Logo" class="mr-2" height="40"
+                    src="{{ url_for('static', filename='Images/Interactive AI.png') }}" width="40"
+                    style="border-radius: 50px;" />
+            </a>
+            <span class="text-lg">Interactive AI</span>
+        </div>
+        <nav class="flex space-x-4">
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
+                Summarization</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
+        </nav>
+    </header>
+
+    <main class="flex flex-col items-center justify-center text-center mt-10">
+        <h1 class="text-4xl font-bold text-white mb-4">Multi-Language Translator with Text and Voice Outputs</h1>
+
+        <form method="POST" enctype="multipart/form-data" class="w-full max-w-lg">
+            <div class="tab">
+                <h2>Text Input</h2>
+                <input type="text" name="text_input" placeholder="Enter English text">
+                <button class="btn" type="submit" name="submit_type" value="text">
+                    Translate Text
+                    <div class="spinner" id="spinner-text"></div>
+                </button>
+            </div>
+            <div class="tab">
+                <h2>Audio File</h2>
+                <input type="file" name="audio_file" accept="audio/*">
+                <button class="btn-alt" type="submit" name="submit_type" value="audio_file">
+                    Translate Audio File
+                    <div class="spinner" id="spinner-audio"></div>
+                </button>
+            </div>
+            <div class="tab">
+                <h2>Record Audio</h2>
+                <input type="file" name="recorded_audio" accept="audio/*" capture>
+                <button class="btn-alt" type="submit" name="submit_type" value="recorded_audio">
+                    Translate Recorded Audio
+                    <div class="spinner" id="spinner-record"></div>
+                </button>
+            </div>
+        </form>
+
+        <div id="results" class="w-full max-w-4xl">
+            <div class="row">
+                <div class="column">
+                    <h3>Russian</h3>
+                    <audio id="ru_output" controls></audio>
+                    <p id="ru_text"></p>
+                </div>
+                <div class="column">
+                    <h3>Turkish</h3>
+                    <audio id="tr_output" controls></audio>
+                    <p id="tr_text"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <h3>Swedish</h3>
+                    <audio id="sv_output" controls></audio>
+                    <p id="sv_text"></p>
+                </div>
+                <div class="column">
+                    <h3>German</h3>
+                    <audio id="de_output" controls></audio>
+                    <p id="de_text"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <h3>Spanish</h3>
+                    <audio id="es_output" controls></audio>
+                    <p id="es_text"></p>
+                </div>
+                <div class="column">
+                    <h3>Japanese</h3>
+                    <audio id="jp_output" controls></audio>
+                    <p id="jp_text"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <h3>Hindi</h3>
+                    <audio id="hi_output" controls></audio>
+                    <p id="hi_text"></p>
+                </div>
+                <div class="column">
+                    <h3>Telugu</h3>
+                    <audio id="te_output" controls></audio>
+                    <p id="te_text"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="container mx-auto text-center">
+        <!-- Company Description -->
+        <p class="mb-6 text-lg font-light text-gray-300">
+            &copy; 2024 We are learning and building innovative AI Tools to shape the future.
+        </p>
+
+        <!-- Links Section -->
+        <div class="flex justify-center space-x-8 mb-6">
+            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Support Our Work</a>
+            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Contact Us</a>
+        </div>
+
+        <!-- Social Media Icons -->
+        <div class="flex justify-center space-x-6 mb-8">
+            <a href="#" aria-label="Facebook" class="hover:text-white transition duration-300">
+                <i class="fab fa-facebook text-xl"></i>
+            </a>
+            <a href="#" aria-label="Twitter" class="hover:text-white transition duration-300">
+                <i class="fab fa-twitter text-xl"></i>
+            </a>
+            <a href="#" aria-label="LinkedIn" class="hover:text-white transition duration-300">
+                <i class="fab fa-linkedin text-xl"></i>
+            </a>
+            <a href="#" aria-label="GitHub" class="hover:text-white transition duration-300">
+                <i class="fab fa-github text-xl"></i>
+            </a>
+        </div>
+
+        <!-- Developer Profile -->
+        <div class="flex justify-center items-center space-x-6">
+            <img src="{{ url_for('static', filename='Images/Deveveloper.jpg') }}" alt="Sandeep Gudisa"
+                class="w-32 h-32 rounded-full border-4 border-gray-600 shadow-lg">
+            <div class="text-left">
+                <p class="text-white text-lg font-semibold">Sandeep Gudisa</p>
+                <p class="text-gray-400 text-sm">Enthusiastic Student Developer specializing in AI, ML, DL, and
+                    innovative solutions.</p>
+                <a href="https://www.linkedin.com/in/sandeep-gudisa/" class="text-blue-400 hover:underline text-sm">View Profile</a>
+            </div>
+        </div>
+    </div>
+</footer>
+      <script>
+          document.querySelectorAll('form button').forEach(button => {
+              button.addEventListener('click', function () {
+                  let spinnerId = this.querySelector('.spinner').id;
+                  document.getElementById(spinnerId).style.display = 'inline-block';
+              });
+          });
+
+          // Add this function to release audio resources
+          function releaseAudioResources() {
+              document.querySelectorAll('audio').forEach(audio => {
+                  audio.pause();
+                  audio.src = '';
+                  audio.load();
+              });
+          }
+
+          // Call this function when navigating away from the page
+          window.addEventListener('beforeunload', releaseAudioResources);
+      </script>
+</body>
+
+</html>

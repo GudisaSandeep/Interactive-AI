@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive AI - Sci-Fi Edition</title>
+    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
+        style="border-radius: 50%;">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        /* Spinner styles */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white font-sans">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center p-4">
+        <div class="flex items-center">
+            <a href="{{ url_for('home') }}">
+                <img alt="Logo" class="mr-2" height="40"
+                    src="{{ url_for('static', filename='Images/Interactive AI.png') }}" width="40"
+                    style="border-radius: 50px;" />
+            </a>
+            <span class="text-lg">
+                Interactive AI
+            </span>
+        </div>
+        <nav class="flex space-x-4">
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
+                Summarization</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
+        </nav>
+        </header>
+        </header>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">AI Chef</h1>
+       <center> <h2><i>Upload or Capture Image of Your Ingredients Lets AI suggests the Dishes</i></h2></center> <br>
+        <div class="flex justify-center items-center">
+            
+            <div class="text-center">
+                <h2 class="mb-3">Upload an Image or Capture Ingredients</h2>
+                <div class="mb-4">
+                    <button class="btn btn-primary mr-2" id="upload-btn">Upload Image</button>
+                    <button class="btn btn-secondary" id="capture-btn">Capture Ingredients</button>
+                </div>
+
+                <!-- Upload Section -->
+                <div id="upload-section" class="text-center" style="display: none;">
+                    <h2 class="mb-3">Upload an Image</h2>
+                    <form id="image-upload-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="image">Select an image of ingredients:</label>
+                            <input type="file" class="form-control-file" id="image" name="image" accept="image/*"
+                                required>
+                        </div>
+                        <div class="mb-4">
+                            <img id="image-preview" src="#" alt="Image Preview" class="img-fluid"
+                                style="display:none; max-width: 300px; border: 2px solid white;" />
+                        </div>
+                        <button type="button" id="remove-image-btn" class="btn btn-danger" style="display:none;">Remove
+                            Image</button>
+                        <button type="submit" class="btn btn-primary">Analyze Image</button>
+                    </form>
+                </div>
+
+                <!-- Capture Section -->
+                <div id="capture-section" class="text-center" style="display: none;">
+                    <h2 class="mb-3">Capture a Photo</h2>
+                    <div id="camera-container">
+                        <video id="camera" class="img-fluid mb-2" autoplay></video>
+                        <button id="capture-photo-btn" class="btn btn-secondary mb-2">Capture Photo</button>
+                        <canvas id="canvas" style="display:none;"></canvas>
+                    </div>
+                    <div class="mb-4">
+                        <img id="captured-preview" src="#" alt="Captured Image" class="img-fluid"
+                            style="display:none; max-width: 300px; border: 2px solid white;" />
+                    </div>
+                    <button type="button" id="remove-captured-image-btn" class="btn btn-danger"
+                        style="display:none;">Remove Captured Image</button>
+                </div>
+
+                <!-- Spinner -->
+                <div id="spinner" class="spinner"></div>
+
+            </div>
+        </div>
+        <div id="response" class="mt-4 text-center"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        // Toggle sections
+        $('#upload-btn').click(function () {
+            $('#upload-section').show();
+            $('#capture-section').hide();
+        });
+
+        $('#capture-btn').click(function () {
+            $('#capture-section').show();
+            $('#upload-section').hide();
+        });
+
+        // Preview uploaded image
+        $("#image").change(function () {
+            const file = this.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function (event) {
+                    $("#image-preview").attr("src", event.target.result).show();
+                    $("#remove-image-btn").show();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Remove uploaded image
+        $("#remove-image-btn").click(function () {
+            $("#image").val('');
+            $("#image-preview").hide();
+            $(this).hide();
+        });
+
+        // Image upload form submission
+        $('#image-upload-form').on('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            analyzeImage(formData);
+        });
+
+        // Camera capture functionality
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture-photo-btn');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing the camera", err);
+            });
+
+        captureButton.addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            $("#captured-preview").attr("src", dataUrl).show();
+            $("#remove-captured-image-btn").show();
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('image', blob, 'captured_image.jpg');
+                analyzeImage(formData);
+            }, 'image/jpeg');
+        });
+
+        // Remove captured image
+        $("#remove-captured-image-btn").click(function () {
+            $("#captured-preview").hide();
+            $(this).hide();
+        });
+
+        function analyzeImage(formData) {
+            $('#spinner').show();
+            $('#response').html('');
+
+            $.ajax({
+                url: '/ai-chef',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#spinner').hide();
+                    let responseHtml = '<h3>Identified Ingredients:</h3>';
+                    responseHtml += '<p>' + data.ingredients + '</p>';
+                    responseHtml += '<h3>Suggested Dishes:</h3>';
+                    responseHtml += '<p>' + data.suggestions + '</p>';
+                    $('#response').html(responseHtml);
+                },
+                error: function () {
+                    $('#spinner').hide();
+                    $('#response').html('<p>Error analyzing image. Please try again.</p>');
+                }
+            });
+        }
+    </script>
+
+    <!-- Footer -->
+<footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="container mx-auto text-center">
+        <!-- Company Description -->
+        <p class="mb-6 text-lg font-light text-gray-300">
+            &copy; 2024 We are learning and building innovative AI Tools to shape the future.
+        </p>
+
+        <!-- Links Section -->
+        <div class="flex justify-center space-x-8 mb-6">
+            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Support Our Work</a>
+            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Contact Us</a>
+        </div>
+
+        <!-- Social Media Icons -->
+        <div class="flex justify-center space-x-6 mb-8">
+            <a href="#" aria-label="Facebook" class="hover:text-white transition duration-300">
+                <i class="fab fa-facebook text-xl"></i>
+            </a>
+            <a href="#" aria-label="Twitter" class="hover:text-white transition duration-300">
+                <i class="fab fa-twitter text-xl"></i>
+            </a>
+            <a href="#" aria-label="LinkedIn" class="hover:text-white transition duration-300">
+                <i class="fab fa-linkedin text-xl"></i>
+            </a>
+            <a href="#" aria-label="GitHub" class="hover:text-white transition duration-300">
+                <i class="fab fa-github text-xl"></i>
+            </a>
+        </div>
+
+        <!-- Developer Profile -->
+        <div class="flex justify-center items-center space-x-6">
+            <img src="{{ url_for('static', filename='Images/Deveveloper.jpg') }}" alt="Sandeep Gudisa"
+                class="w-32 h-32 rounded-full border-4 border-gray-600 shadow-lg">
+            <div class="text-left">
+                <p class="text-white text-lg font-semibold">Sandeep Gudisa</p>
+                <p class="text-gray-400 text-sm">Enthusiastic Student Developer specializing in AI, ML, DL, and
+                    innovative solutions.</p>
+                <a href="https://www.linkedin.com/in/sandeep-gudisa/" class="text-blue-400 hover:underline text-sm">View Profile</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+
+</html>

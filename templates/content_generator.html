@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Content Generator Studio</title>
+    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
+        style="border-radius: 50%;">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<header class="flex justify-between items-center p-4">
+    <div class="flex items-center">
+        <a href="{{ url_for('home') }}">
+            <img alt="Logo" class="mr-2" height="40" src="{{ url_for('static', filename='Images/Interactive AI.png') }}"
+                width="40" style="border-radius: 50px;" />
+        </a>
+        <span class="text-lg">Interactive AI</span>
+    </div>
+    <nav class="flex space-x-4">
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language
+            Translation</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
+            Summarization</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
+        <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
+    </nav>
+</header>
+
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-bold mb-8 text-red-600"><i class="fab fa-youtube mr-2"></i>Content Generator Studio</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4">Generate Content</h2>
+                <form id="contentForm">
+                    <div class="mb-4">
+                        <label for="topic" class="block mb-2">Video Topic:</label>
+                        <input type="text" id="topic" name="topic" class="w-full p-2 bg-gray-700 rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="content_type" class="block mb-2">Content Type:</label>
+                        <select id="content_type" name="content_type" class="w-full p-2 bg-gray-700 rounded">
+                            <option value="educational">Educational</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="tutorial">Tutorial</option>
+                            <option value="vlog">Vlog</option>
+                            <option value="review">Review</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <i class="fas fa-magic mr-2"></i>Generate Ideas
+                    </button>
+                </form>
+            </div>
+            <div id="result" class="bg-gray-800 p-6 rounded-lg shadow-lg hidden">
+                <h2 class="text-2xl font-bold mb-4">Generated Content Ideas</h2>
+                <div id="generatedContent" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#contentForm').submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/content-generator',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#generatedContent').html(formatContent(response.Assistant));
+                        $('#result').removeClass('hidden');
+                    }
+                });
+            });
+                                 function formatContent(content) {
+                                     return content.replace(/\n/g, '<br>');
+                                 }
+                             });
+    </script>
+</body>
+</html>

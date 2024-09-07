@@ -1,0 +1,104 @@
+body {
+    background: #0d0d0d;
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+/* Parallax Background */
+
+
+/* Glowing Text */
+h1,
+p {
+    text-shadow: 0px 0px 15px rgba(255, 255, 255, 0.7);
+}
+
+/* Glowing Buttons */
+a.glow-button {
+    background-color: transparent;
+    color: white;
+    border: 2px solid #00ffc3;
+    padding: 10px 30px;
+    border-radius: 50px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+a.glow-button:hover {
+    color: #00ffc3;
+    box-shadow: 0px 0px 20px 10px rgba(0, 255, 195, 0.8);
+}
+
+/* Neon Borders */
+.card {
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    position: relative;
+}
+
+.card:hover {
+    border-color: #00ffc3;
+    box-shadow: 0px 0px 20px 5px rgba(0, 255, 195, 0.7);
+    transform: translateY(-10px) rotateX(10deg) rotateY(10deg);
+}
+
+/* 3D Hover Effects */
+a:hover,
+img:hover {
+    transform: scale(1.08);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Footer Hover Effects */
+img:hover {
+    transform: rotateY(360deg);
+    transition: transform 1.5s;
+}
+
+/* Parallax Sections */
+section {
+    padding: 100px 0;
+    perspective: 1000px;
+}
+
+/* Text Effects */
+h1 {
+    font-size: 4rem;
+    animation: neon-flicker 1.5s infinite alternate;
+}
+
+@keyframes neon-flicker {
+
+    0%,
+    100% {
+        text-shadow: 0 0 8px rgba(0, 255, 195, 0.7), 0 0 10px rgba(0, 255, 195, 0.5);
+    }
+
+    50% {
+        text-shadow: 0 0 20px rgba(0, 255, 195, 1), 0 0 30px rgba(0, 255, 195, 0.9);
+    }
+}
+
+/* Spinner */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

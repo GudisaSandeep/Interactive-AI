@@ -1,0 +1,134 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive AI - Sci-Fi Edition</title>
+    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
+        style="border-radius: 50%;">
+    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
+        style="border-radius: 50%;">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+
+    <!-- Adding animations for smoother transitions -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Transition effect for buttons */
+        button:hover {
+            transition: all 0.2s ease-in-out;
+            transform: scale(1.05);
+        }
+
+        /* Adding pulse animation to the submit button */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 167, 240, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(34, 167, 240, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 167, 240, 0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+    <header class="flex justify-between items-center p-4 border-b border-gray-700">
+        <div class="flex items-center">
+            <a href="{{ url_for('home') }}">
+                <img alt="Logo" class="mr-2" height="40"
+                    src="{{ url_for('static', filename='Images/Interactive AI.png') }}" width="40"
+                    style="border-radius: 50px;" />
+            </a>
+            <span class="text-2xl font-semibold text-blue-400">Interactive AI</span>
+        </div>
+        <nav class="flex space-x-4">
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
+                Summarization</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
+        </nav>
+        </header>
+    </header>
+
+    <div class="container mx-auto p-8 bg-gray-800 rounded-lg shadow-lg mt-8">
+        <h1 class="text-4xl font-bold mb-8 text-center text-blue-400">AI Code Generator</h1>
+
+        <form id="codeForm" class="mb-8">
+            <div class="mb-6">
+                <label for="code_request" class="block text-lg mb-2 text-gray-300">Describe the code you need:</label>
+                <textarea id="code_request" name="code_request" rows="4"
+                    class="w-full p-3 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+            </div>
+            <div class="mb-6">
+                <label for="language" class="block text-lg mb-2 text-gray-300">Select programming language:</label>
+                <select id="language" name="language"
+                    class="w-full p-3 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <option value="Python">Python</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="Java">Java</option>
+                    <option value="C++">C++</option>
+                    <option value="Ruby">Ruby</option>
+                    <option value="C">C</option>
+                    <option value="Go">Go</option>
+                    <option value="Dart">Dart</option>
+                </select>
+            </div>
+            <button type="submit"
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out pulse">
+                <i class="fas fa-magic mr-2"></i>Generate Code
+            </button>
+        </form>
+
+        <!-- Loading spinner -->
+        <div id="loading" class="hidden text-center mb-6">
+            <i class="fas fa-spinner fa-spin text-4xl text-blue-400"></i>
+        </div>
+
+        <div id="result" class="bg-gray-800 p-6 rounded-lg hidden">
+            <h2 class="text-2xl font-bold mb-4 text-blue-400">Generated Code:</h2>
+            <pre id="generatedCode" class="whitespace-pre-wrap text-gray-200"></pre>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#codeForm').submit(function (e) {
+                e.preventDefault();
+                $('#loading').removeClass('hidden');
+                $('#result').addClass('hidden');
+                $.ajax({
+                    url: '/code-generator',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        $('#generatedCode').text(response.Assistant);
+                        $('#result').removeClass('hidden');
+                        $('#loading').addClass('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
