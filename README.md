@@ -91,7 +91,7 @@ This project is licensed under the MIT License.
 For any inquiries or contributions, please contact:
 
 - **Developer**: Sandeep Gudisa
-- **Email**: sandeep.gudisa@domain.com
+- **Email**: gudisasandeep141312@gmail.com
 
 ---
 
