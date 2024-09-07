@@ -13,3 +13,4 @@ elevenlabs
 youtube-transcript-api
 pydantic
 pyaudio
+
