@@ -13,7 +13,7 @@ import threading
 import assemblyai as aai
 from translate import Translator
 import uuid
-from elevenlabs import generate, VoiceSettings, Client as ElevenLabs
+from elevenlabs import generate, VoiceSettings, client as ElevenLabs
 from pathlib import Path
 from youtube_transcript_api import YouTubeTranscriptApi
 import base64
