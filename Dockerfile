@@ -1,8 +1,17 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM python:3.9
 
 # Set the working directory in the container
 WORKDIR /app
+
+# Install system dependencies required for pyaudio
+RUN apt-get update && \
+    apt-get install -y \
+    portaudio19-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+RUN pip install --upgrade pip
 
 # Copy the current directory contents into the container at /app
 COPY . /app
@@ -14,7 +23,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 7860
 
 # Define environment variable
-ENV PYTHONUNBUFFERED=1
+ENV NAME World
 
-# Run main2.py when the container launches
+# Run app.py when the container launches
 CMD ["python", "app.py"]
