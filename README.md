@@ -51,8 +51,8 @@ Convert any text into speech using Microsoft's text-to-speech technology and pla
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/ai-multifunction-app.git
-   cd ai-multifunction-app
+   git clone https://github.com/GudisaSandeep/Interactive-AI/tree/master
+   cd Interactive-AI
    ```
 
 2. Install the required dependencies:
@@ -75,73 +75,12 @@ Convert any text into speech using Microsoft's text-to-speech technology and pla
 
 5. Run the Flask application:
    ```bash
-   flask run
+   python app.py
    ```
 
 6. Open the application by navigating to `http://127.0.0.1:5000/` in your browser.
 
-## Usage
 
-### Text Chat
-- Navigate to `/text-chat` and enter a message. The AI assistant will respond in plain text.
-
-### Image Analysis
-- Upload an image at `/image-analysis`, enter a prompt, and receive AI-generated insights.
-
-### AI Chef
-- Visit `/ai-chef` to upload an image of ingredients. The AI will suggest dishes and provide step-by-step instructions.
-
-### Voice Interaction
-- Visit `/voice-interaction` and start a voice conversation with the AI. The assistant listens and responds using text-to-speech.
-
-### Language Translation
-- Navigate to `/language-translation`, provide text, and select a target language for translation.
-
-### Video Transcript Summarization
-- Go to `/video-summarization`, enter a YouTube video link, and get a summarized transcript.
-
-### Text-to-Speech
-- Navigate to `/text-to-speech`, enter text, and convert it into speech.
-
-## API Endpoints
-
-### 1. `/text-chat` [POST]
-- Input: JSON with a `text` field
-- Output: JSON with the AI's response
-
-### 2. `/image-analysis` [POST]
-- Input: Image file and text prompt
-- Output: AI-generated image analysis
-
-### 3. `/ai-chef` [POST]
-- Input: Image file of ingredients
-- Output: JSON with a list of ingredients and suggested dishes
-
-### 4. `/start-voice-interaction` [POST]
-- Starts voice-based interaction with the AI.
-
-### 5. `/stop-voice-interaction` [POST]
-- Stops the ongoing voice interaction.
-
-### 6. `/language-translation` [POST]
-- Input: Text and target language
-- Output: Translated text
-
-### 7. `/video-summarization` [POST]
-- Input: YouTube video URL
-- Output: Summarized transcript
-
-### 8. `/text-to-speech` [POST]
-- Input: Text
-- Output: Speech audio file
-
-## Contributing
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Create a Pull Request.
 
 ## License
 
