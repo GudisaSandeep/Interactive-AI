@@ -13,8 +13,7 @@ import threading
 import assemblyai as aai
 from translate import Translator
 import uuid
-from elevenlabs import VoiceSettings
-from elevenlabs.client import ElevenLabs
+from elevenlabs import generate, VoiceSettings, Client as ElevenLabs
 from pathlib import Path
 from youtube_transcript_api import YouTubeTranscriptApi
 import base64
@@ -233,15 +232,13 @@ def translate_text(text):
 
 def multi_language_text_to_speech(text):
     client = ElevenLabs(
-        ElevenLabs_api_key=os.getenv("ElevenLabs_api_key"),
+        api_key=os.getenv("ElevenLabs_api_key"),
     )
 
-    response = client.text_to_speech.convert(
-        voice_id="nPczCjzI2devNBz1zQrb",
-        optimize_streaming_latency="0",
-        output_format="mp3_22050_32",
+    audio = generate(
         text=text,
-        model_id="eleven_multilingual_v2",
+        voice="nPczCjzI2devNBz1zQrb",
+        model="eleven_multilingual_v2",
         voice_settings=VoiceSettings(
             stability=0.5,
             similarity_boost=0.8,
@@ -253,9 +250,7 @@ def multi_language_text_to_speech(text):
     save_file_path = f"{uuid.uuid4()}.mp3"
 
     with open(save_file_path, "wb") as f:
-        for chunk in response:
-            if chunk:
-                f.write(chunk)
+        f.write(audio)
 
     print(f"{save_file_path}: A new audio file was saved successfully!")
     return save_file_path
