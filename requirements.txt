@@ -1,7 +1,7 @@
 Flask==2.2.2
 python-dotenv==1.0.0
 google-cloud==0.34.0
-google-generativeai==0.0.1
+google-generativeai==0.7.2
 Pillow==9.5.0
 speechrecognition==3.8.1
 edge-tts==2.0.1
