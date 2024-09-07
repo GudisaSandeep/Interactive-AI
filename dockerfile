@@ -1,25 +1,23 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# Use the official Python image from DockerHub
+FROM python:3.10-slim
 
-# Set the working directory in the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt ./
+# Copy the requirements.txt into the container
+COPY requirements.txt .
 
-# Install the dependencies
-RUN python -m venv /opt/venv && \
-    /opt/venv/bin/pip install --upgrade pip && \
-    /opt/venv/bin/pip install -r requirements.txt
+# Install the required Python packages
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container
-COPY . /app
+# Copy the entire project folder into the container
+COPY . .
 
-# Set environment variables
-ENV PATH="/opt/venv/bin:$PATH"
+# Set environment variables (like disabling Flask debug mode in production)
+ENV FLASK_ENV=production
 
-# Specify the command to run the app
-CMD ["python", "app.py"]
-
-# Expose the port the app runs on
+# Expose the port Flask will run on
 EXPOSE 5000
+
+# Define the command to run the Flask app
+CMD ["flask", "run", "--host=0.0.0.0"]
