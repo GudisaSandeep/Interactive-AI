@@ -73,7 +73,7 @@ Convert any text into speech using Microsoft's text-to-speech technology and pla
    mkdir uploads
    ```
 
-5. Start
+5. Start the Application
    ```bash
    python app.py
    ```
