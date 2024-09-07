@@ -1,9 +1,9 @@
 Flask==3.0.3
 python-dotenv==1.0.0
-google-cloud-core==3.21.0
-google-generativeai==0.12.0
+google-cloud-core==3.3.0  # Updated to a compatible version
+google-generativeai==0.7.2  # Adjusted to a version known to work
 Pillow==10.5.0
-SpeechRecognition==3.10.4
+SpeechRecognition==3.8.1  # Updated to a compatible version
 edge-tts==6.1.12
 pygame==2.4.0
 assemblyai==0.17.0
