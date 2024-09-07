@@ -8,13 +8,10 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install the required Python packages
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m venv --copies /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt
 
 # Copy the entire project folder into the container
 COPY . .
-
-# Set environment variables (like disabling Flask debug mode in production)
-ENV FLASK_ENV=production
 
 # Expose the port Flask will run on
 EXPOSE 5000
