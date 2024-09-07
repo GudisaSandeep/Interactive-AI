@@ -93,6 +93,4 @@ For any inquiries or contributions, please contact:
 - **Developer**: Sandeep Gudisa
 - **Email**: gudisasandeep141312@gmail.com
 
----
 
-This `README.md` provides a comprehensive guide for anyone using or contributing to the project. You can customize the repository links and contact information.
