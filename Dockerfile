@@ -7,9 +7,6 @@ WORKDIR /app
 # Copy the requirements file into the container
 COPY requirements.txt .
 
-# List files to ensure requirements.txt is present
-RUN ls -l
-
 # Upgrade pip to ensure compatibility with newer packages
 RUN pip install --upgrade pip
 
