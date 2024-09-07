@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template, jsonify, url_for, send_file, flash
+
+from flask import Flask, request, render_template, jsonify, url_for, send_file,flash
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -18,9 +19,7 @@ from elevenlabs.client import ElevenLabs
 from pathlib import Path
 from youtube_transcript_api import YouTubeTranscriptApi
 import base64
-import re
-import time
-
+import re,time
 # Load environment variables from .env file
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
@@ -32,25 +31,26 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-
 if API_KEY is None:
     @app.route('/')
     def api_key_error():
-        return "API Key is not set. Please set the API key in the .env file.", 500
+        return "API Key is not set. Please set the API key in the .env file."
 else:
     genai.configure(api_key=API_KEY)
-
 def transcribe_audio(audio_file):
     aai.settings.api_key = os.getenv("api_key")
     transcriber = aai.Transcriber()
     return transcriber.transcribe(audio_file)
+
 
 def text_chat(text):
     model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     prompt = text + "\n\nProvide your response in plain text format without any markdown, formatting, or special characters."
     response = model.generate_content(
         glm.Content(
-            parts=[glm.Part(text=prompt)],
+            parts=[
+                glm.Part(text=prompt),
+            ],
         ),
         stream=True
     )
@@ -76,7 +76,7 @@ def image_analysis(image, prompt):
     response = model.generate_content(
         glm.Content(
             parts=[
-                glm.Part(text=prompt + "\n\nProvide your response in plain text format without any markdown, formatting, or special characters."),
+                glm.Part(text=prompt +  "\n\nProvide your response in plain text format without any markdown, formatting, or special characters."),
                 glm.Part(inline_data=glm.Blob(mime_type='image/jpeg', data=bytes_data)),
             ],
         ),
@@ -84,7 +84,6 @@ def image_analysis(image, prompt):
     )
     response.resolve()
     return response.text
-
 def ai_chef_analysis(image):
     pil_image = Image.open(io.BytesIO(image))
     img_byte_arr = io.BytesIO()
@@ -93,16 +92,15 @@ def ai_chef_analysis(image):
 
     model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     chef_prompt = (
-        "Analyze this image and identify the ingredients present. "
-        "Then, suggest 3 dishes that can be made using these ingredients.\n\n"
-        "Format your response as follows:\n\n"
-        "Ingredients: [List of identified ingredients]\n\n"
-        "Suggested Dishes:\n"
-        "1. [Dish name]: [Brief description]\n\n"
-        "2. [Dish name]: [Brief description]\n\n"
-        "3. [Dish name]: [Brief description]\n\n"
-        "Give the process of making step by step\n\n"
-        "Provide your response in plain text format without any markdown, formatting, or special characters."
+        "Analyze this image and identify the ingredients present.   "
+        "Then, suggest 3 dishes that can be made using these ingredients. + \n\n "
+        "Format your response as follows: + \n\n"
+        "Ingredients: [List of identified ingredients]"
+        "Suggested Dishes:"
+        "1. [Dish name]: [Brief description] + \n\n"
+        "2. [Dish name]: [Brief description] + \n\n"
+        "3. [Dish name]: [Brief description] + \n\n"
+        "Give the process of making step by step" + "\n\nProvide your response in plain text format without any markdown, formatting, or special characters."
     )
     
     response = model.generate_content(
@@ -116,12 +114,12 @@ def ai_chef_analysis(image):
     )
     response.resolve()
     return response.text
-
 def translate_text(text, target_language):
     translator = Translator()
     translated = translator.translate(text, dest=target_language)
     return translated.text
 
+# Asynchronous text-to-speech function
 async def text_to_speech(text, voice):
     try:
         communicate = edge_tts.Communicate(text, voice)
@@ -136,7 +134,6 @@ async def text_to_speech(text, voice):
     except edge_tts.exceptions.NoAudioReceived:
         print(f"No audio received for text: '{text}' with voice: '{voice}'")
         return None
-
 class VoiceInteraction:
     def __init__(self):
         self.is_running = False
@@ -236,9 +233,11 @@ def translate_text(text):
     return list_translations
 
 def multi_language_text_to_speech(text):
-    client = ElevenLabs(api_key=os.getenv("ElevenLabs_api_key"))
+    client = ElevenLabs(
+        api_key=os.getenv("ElevenLabs_api_key"),
+    )
 
-    audio = client.generate(
+    audio = generate(
         text=text,
         voice="nPczCjzI2devNBz1zQrb",
         model="eleven_multilingual_v2",
@@ -253,71 +252,306 @@ def multi_language_text_to_speech(text):
     save_file_path = f"{uuid.uuid4()}.mp3"
 
     with open(save_file_path, "wb") as f:
-        f.write(audio["audio_data"])
+        f.write(audio)
 
+    print(f"{save_file_path}: A new audio file was saved successfully!")
     return save_file_path
+def get_video_transcript(video_id):
+    try:
+        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        return " ".join([entry['text'] for entry in transcript])
+    except Exception as e:
+        return f"Error fetching transcript: {str(e)}"
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-@app.route('/text', methods=['POST'])
-def text_route():
-    text_input = request.form.get('text_input')
-    if text_input:
-        result = process_input(text_input, None, None)
+@app.route('/text-chat', methods=['GET', 'POST'])
+def handle_text_chat():
+    if request.method == 'POST':
+        text = request.form['text']
+        result = text_chat(text)
         return jsonify(result)
-    return jsonify({"error": "No text input provided"}), 400
+    return render_template('text_chat.html')
 
-@app.route('/audio', methods=['POST'])
-def audio_route():
-    if 'audio_file' not in request.files:
-        return jsonify({"error": "No audio file provided"}), 400
-
-    audio_file = request.files['audio_file']
-    if audio_file.filename == '':
-        return jsonify({"error": "No selected audio file"}), 400
-
-    if audio_file:
-        result = process_input(None, audio_file, None)
-        return jsonify(result)
-    return jsonify({"error": "Audio file upload failed"}), 500
-
-@app.route('/recorded', methods=['POST'])
-def recorded_route():
-    if 'recorded_audio' not in request.files:
-        return jsonify({"error": "No recorded audio provided"}), 400
-
-    recorded_audio = request.files['recorded_audio']
-    if recorded_audio.filename == '':
-        return jsonify({"error": "No selected recorded audio"}), 400
-
-    if recorded_audio:
-        result = process_input(None, None, recorded_audio)
-        return jsonify(result)
-    return jsonify({"error": "Recorded audio upload failed"}), 500
-
-@app.route('/image', methods=['POST'])
-def image_route():
-    if 'image_file' not in request.files:
-        return jsonify({"error": "No image file provided"}), 400
-
-    image_file = request.files['image_file']
-    prompt = request.form.get('prompt', '')
-    
-    if image_file and image_file.filename != '':
-        image = image_file.read()
+@app.route('/image-analysis', methods=['GET', 'POST'])
+def handle_image_analysis():
+    if request.method == 'POST':
+        image = request.files['image'].read()
+        prompt = request.form['prompt']
         result = image_analysis(image, prompt)
-        return jsonify({"result": result})
-    return jsonify({"error": "Image file upload failed"}), 500
-
-@app.route('/ai-chef', methods=['POST'])
-def ai_chef_route():
-    if 'image_file' not in request.files:
-        return jsonify({"error": "No image file provided"}), 400
-
-    image_file = request.files['image_file']
-    if image_file and image_file.filename != '':
-        image = image_file.read()
+        return jsonify(result)
+    return render_template('image_analysis.html')
+@app.route('/ai-chef', methods=['GET', 'POST'])
+def ai_chef():
+    if request.method == 'POST':
+        if 'image' not in request.files:
+            return jsonify({"error": "No image file provided"}), 400
+        
+        image = request.files['image'].read()
         result = ai_chef_analysis(image)
-        return jsonify({"result": result})
-    return jsonify({"error": "Image file upload failed"}), 500
+        
+        # Parse the result to separate ingredients and suggestions
+        parts = result.split("Suggested Dishes:")
+        ingredients = parts[0].replace("Ingredients:", "").strip()
+        suggestions = parts[1].strip() if len(parts) > 1 else "No suggestions available."
+        
+        return jsonify({
+            "ingredients": ingredients,
+            "suggestions": suggestions
+        })
+    
+    return render_template('AI_Chef.html')
 
-if __name__ == '__main__':
+@app.route('/start-voice-interaction', methods=['POST'])
+def start_voice_interaction():
+    voice_interaction.start()
+    return jsonify({"status": "Voice interaction started. Speak now!"})
+
+@app.route('/stop-voice-interaction', methods=['POST'])
+def stop_voice_interaction():
+    voice_interaction.stop()
+    return jsonify({"status": "Voice interaction stopped.", "conversation": voice_interaction.conversation})
+
+@app.route('/voice-interaction', methods=['GET'])
+def voice_interaction_page():
+    return render_template('voice_interaction_page.html')
+
+@app.route('/language-translation', methods=['GET', 'POST'])
+def language_translation():
+    if request.method == 'POST':
+        text = request.form['text']
+        target_language = request.form['target_language']
+        translator = Translator()
+        translated = translator.translate(text, dest=target_language)
+        return jsonify({"translated_text": translated.text})
+    return render_template('language_translation.html')
+
+def summarize_video_transcript(transcript):
+    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    prompt = f"zSummarize the following video transcript:\n\n{transcript}"
+    response = model.generate_content(
+        glm.Content(parts=[glm.Part(text=prompt)]),
+        stream=True
+    )
+    response.resolve()
+    return response.text
+
+@app.route('/video-summarization', methods=['GET', 'POST'])
+def video_summarization():
+    if request.method == 'POST':
+        video_url = request.form['video_url']
+        video_id = video_url.split('v=')[-1]
+        transcript = get_video_transcript(video_id)
+        summary = summarize_video_transcript(transcript)
+        return jsonify({"summary": summary})
+    return render_template('video_summarozation.html')
+
+@app.route('/text-to-speech', methods=['GET', 'POST'])
+def text_to_speech_route():
+    if request.method == 'POST':
+        text = request.form['text']
+        audio_file = text_to_speech(text)
+        return jsonify({"audio_file": audio_file})
+    return render_template('text_to_speech.html')
+
+
+@app.route('/kids-ai', methods=['GET', 'POST'])
+def kids_ai():
+    if request.method == 'POST':
+        if 'image' in request.files:
+            image = request.files['image'].read()
+            prompt = "You are a friendly AI assistant for kids. Analyze this image and describe it in a fun, educational way for children. Include interesting facts and ask an engaging question about the image."
+            result = image_analysis(image, prompt)
+        else:
+            homework = request.form['homework']
+            prompt = f"You are a friendly AI tutor for kids. Help with this homework in a fun and encouraging way: {homework}. Use simple language, provide step-by-step explanations, and include a fun fact related to the topic."
+            result = text_chat(prompt)
+        
+        # Extract only the text response from the result
+        if isinstance(result, dict) and 'Assistant' in result:
+            response_text = result['Assistant']
+        else:
+            response_text = str(result)
+        
+        return jsonify({"response": response_text})
+    return render_template('kids_ai.html')
+@app.route('/content-generator', methods=['GET', 'POST'])
+def content_generator():
+    if request.method == 'POST':
+        topic = request.form['topic']
+        content_type = request.form['content_type']
+        prompt = f"Generate {content_type} ideas for a YouTube video on: {topic}. Include title, description, and key points. Provide the response in plain text format without any markdown or special formatting."
+        generated_content = text_chat(prompt)
+        
+        # Remove any remaining markdown or formatting
+        plain_text = re.sub(r'[#*_\-\[\]()]', '', generated_content['Assistant'])
+        plain_text = re.sub(r'\n+', '\n', plain_text).strip()
+        
+        return jsonify({"Assistant": plain_text})
+    return render_template('content_generator.html')
+
+@app.route('/interactive-ai', methods=['GET', 'POST'])
+def interactive_ai():
+    if request.method == 'POST':
+        user_input = request.form['user_input']
+        response = text_chat(user_input)
+        return jsonify(response)
+    return render_template('interactive_ai.html')
+
+
+@app.route('/code-generator', methods=['GET', 'POST'])
+def code_generator():
+    if request.method == 'POST':
+        code_request = request.form['code_request']
+        language = request.form['language']
+        prompt = f"Generate {language} code for: {code_request}"
+        generated_code = text_chat(prompt)
+        return jsonify(generated_code)
+    return render_template('code_generator.html')
+@app.route('/TTS', methods=['GET', 'POST'])
+def TTS():
+    VOICE_OPTIONS = {
+    "English": {
+        "en-AU-NatashaNeural": "Natasha (Australia)",
+        "en-CA-LiamNeural": "Liam (Canada)",
+        # Add more voices as in the previous Streamlit code
+    },
+    "spanish": {
+        "es-ES-ElviraNeural": "Elvira (Spain)",
+        "es-MX-JorgeNeural": "Jorge (Mexico)"
+
+    },
+    "french": {
+        "fr-CA-JeanNeural": "Jean (Canada)",
+        "fr-FR-DeniseNeural": "Denise (France)"
+    },
+    "german": {
+        "de-AT-IngridNeural": "Ingrid (Austria)",
+        "de-DE-ConradNeural": "Conrad (Germany)"
+
+    },
+    "italian": {
+        
+        "it-IT-ElsaNeural": "Elsa (Italy)"
+
+    },
+    "portuguese": {
+        "pt-BR-FranciscaNeural": "Francisca (Brazil)",
+        "pt-PT-DuarteNeural": "Duarte (Portugal)"
+    },
+    "telugu" : {
+        "te-IN-PriyaNeural": "Priya (India)",
+        "te-IN-SakethNeural": "Saketh (India)",
+
+    },
+    "Hindhi": {
+        "hi-IN-MadhurNeural": "Madhur (India)",
+        "hi-IN-SwaraNeural": "Swara (India)"
+
+    },
+    "Tamil": {
+        "ta-IN-PallaviNeural": "Pallavi (India)",
+        "ta-IN-ValluvarNeural": "Valluvar (India)"
+    },
+    "Malayalam": {
+        "ml-IN-MidhunNeural": "Midhun (India)",
+        "ml-IN-SobhanaNeural": "Sobhana (India)"
+
+    },
+    "Kannada": {
+        "kn-IN-GaganNeural": "Gagan (India)",
+        "kn-IN-SakethNeural": "Saketh (India)"
+    },
+    "Marathi": {
+        "mr-IN-SakshiNeural": "Sakshi (India)",
+        "mr-IN-VaishaliNeural": "Vaishali (India)"
+
+    },
+    "Gujarati": {
+        "gu-IN-DhwaniNeural": "Dhwani (India)",
+        "gu-IN-NiranjanNeural": "Niranjan (India)"
+    },
+    "Bengali": {
+        
+        "bn-IN-TanishqNeural": "Tanishq (India)",
+        "bn-IN-BashkarNeural": "Bashkar (India)"
+    },
+    "Korean": {
+        "ko-KR-InJoonNeural": "InJoon (Korea)",
+        "ko-KR-SeoyeonNeural": "Seoyeon (Korea)"
+    },
+    "Japanese": {
+        "ja-JP-NanamiNeural": "Nanami (Japan)",
+        "ja-JP-KeitaNeural": "Keita (Japan)"
+    },
+    "Chinese": {
+        "zh-CN-XiaoxiaoNeural": "Xiaoxiao (China)",
+        "zh-CN-XiaoyouNeural": "Xiaoyou (China)"
+    },}
+    languages = list(VOICE_OPTIONS.keys())
+    selected_language = request.form.get("language", "English")
+    selected_voice = request.form.get("voice", next(iter(VOICE_OPTIONS[selected_language].keys())))
+    audio_data = None
+    
+    if request.method == 'POST':
+        text_input = request.form.get("text_input")
+        if text_input:
+            audio_data = asyncio.run(text_to_speech(text_input, selected_voice))
+            if audio_data is None:
+                flash("No audio could be generated. Please try again with different text or voice settings.", "error")
+
+    return render_template("TTS.html", 
+                           languages=languages, 
+                           selected_language=selected_language, 
+                           selected_voice=selected_voice, 
+                           audio_data=audio_data, 
+                           voice_options=VOICE_OPTIONS)
+@app.route('/download')
+def download_audio():
+    audio_data = request.args.get("audio")
+    audio_file = io.BytesIO(base64.b64decode(audio_data))
+    audio_file.seek(0)
+    return send_file(audio_file, mimetype="audio/mp3", as_attachment=True, download_name="generated_speech.mp3")
+
+@app.template_filter('b64encode')
+def b64encode_filter(s):
+    return base64.b64encode(s).decode('utf-8')
+
+@app.route('/about-us')
+def about_us():
+    return render_template('About us.html')
+
+
+@app.route('/multi_language_translator', methods=['GET', 'POST'])
+def multi_language_translator():
+    if request.method == 'POST':
+        text_input = request.form.get('text_input')
+        audio_file = request.files.get('audio_file')
+        recorded_audio = request.files.get('recorded_audio')
+
+        try:
+            result = process_input(text_input, audio_file, recorded_audio)
+            # Convert audio paths to base64 encoded data
+            for i, path in enumerate(result['audio_paths']):
+                with open(path, 'rb') as audio_file:
+                    audio_data = audio_file.read()
+                    result['audio_paths'][i] = base64.b64encode(audio_data).decode('utf-8')
+            
+            # Add this at the end of the POST handling
+            #cleanup_old_audio_files('static/audio', max_age_seconds=3600)  # Clean up files older than 1 hour
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+
+    return render_template('multi_language_translator.html')
+@app.route('/get-conversation', methods=['GET'])
+def get_conversation():
+    return jsonify({"conversation": voice_interaction.conversation})
+
+
+
+
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
