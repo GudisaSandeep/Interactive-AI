@@ -1,14 +1,14 @@
 Flask==3.0.3
 python-dotenv==1.0.0
-google-cloud-core==3.3.0  # Updated to a compatible version
-google-generativeai==0.7.2  # Adjusted to a version known to work
-Pillow==10.5.0
-SpeechRecognition==3.8.1  # Updated to a compatible version
-edge-tts==6.1.12
-pygame==2.4.0
-assemblyai==0.17.0
+google-cloud-core==2.4.1
+google-generativeai==0.3.2
+Pillow==10.2.0
+SpeechRecognition==3.10.1
+edge-tts==6.1.9
+pygame==2.5.2
+assemblyai==0.21.0
 translate==3.6.1
 uuid==1.30
-elevenlabs==1.7.0
-youtube-transcript-api==0.6.1
-pydantic==1.10.12
+elevenlabs==0.2.27
+youtube-transcript-api==0.6.2
+pydantic==1.10.14
