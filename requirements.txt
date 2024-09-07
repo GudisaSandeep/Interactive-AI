@@ -9,6 +9,5 @@ pygame==2.4.0
 assemblyai==0.17.0
 translate==3.6.1
 uuid==1.30
-elevenlabs==0.2.24
-
+elevenlabs==0.2.18
 youtube-transcript-api==0.6.1
