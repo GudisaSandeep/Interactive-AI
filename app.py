@@ -21,7 +21,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 import base64
 import re,time
 
-API_KEY = "sk_9852342ec7afeaed89f471384e7e8cf019cd2899167704e2"
+API_KEY = os.getenv("API_KEY")
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -37,7 +37,7 @@ if API_KEY is None:
 else:
     genai.configure(api_key=API_KEY)
 def transcribe_audio(audio_file):
-    aai.settings.api_key = "551438c8eb2d4eb2927307d8c763408e"
+    aai.settings.api_key = os.getenv("api_key")
     transcriber = aai.Transcriber()
     return transcriber.transcribe(audio_file)
 
@@ -233,7 +233,7 @@ def translate_text(text):
 
 def multi_language_text_to_speech(text):
     client = ElevenLabs(
-        api_key="sk_24a253c49ed39f920f9849c7dae74ab26d6b8c826089b0c6",
+        api_key=os.getenv("ElevenLabs_api_key"),
     )
 
     audio = generate(
