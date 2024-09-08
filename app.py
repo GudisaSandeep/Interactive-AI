@@ -38,7 +38,7 @@ if API_KEY is None:
 else:
     genai.configure(api_key=API_KEY)
 def transcribe_audio(audio_file):
-    aai.settings.api_key = os.getenv("api_key")
+    aai.settings.api_key = "551438c8eb2d4eb2927307d8c763408e"
     transcriber = aai.Transcriber()
     return transcriber.transcribe(audio_file)
 
@@ -234,7 +234,7 @@ def translate_text(text):
 
 def multi_language_text_to_speech(text):
     client = ElevenLabs(
-        api_key=os.getenv("ElevenLabs_api_key"),
+        api_key="sk_24a253c49ed39f920f9849c7dae74ab26d6b8c826089b0c6",
     )
 
     audio = generate(
