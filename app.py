@@ -20,8 +20,7 @@ from pathlib import Path
 from youtube_transcript_api import YouTubeTranscriptApi
 import base64
 import re,time
-# Load environment variables from .env file
-load_dotenv()
+
 API_KEY = "sk_9852342ec7afeaed89f471384e7e8cf019cd2899167704e2"
 
 app = Flask(__name__)
