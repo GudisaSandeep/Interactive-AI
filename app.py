@@ -43,18 +43,25 @@ def transcribe_audio(audio_file):
 
 
 def text_chat(text):
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    if not API_KEY:
+        return {"error": "API Key is not set"}
+    
+    model = genai.GenerativeModel('gemini-pro')
     prompt = text + "\n\nProvide your response in plain text format without any markdown, formatting, or special characters."
-    response = model.generate_content(
-        glm.Content(
-            parts=[
-                glm.Part(text=prompt),
-            ],
-        ),
-        stream=True
-    )
-    response.resolve()
-    return {"You": text, "Assistant": response.text}
+    
+    try:
+        response = model.generate_content(
+            contents=[
+                {
+                    "role": "user",
+                    "parts": [{"text": prompt}]
+                }
+            ]
+        )
+        return {"You": text, "Assistant": response.text}
+    except Exception as e:
+        print(f"Error in text_chat: {str(e)}")
+        return {"error": f"An error occurred while processing your request: {str(e)}"}
 
 def cleanup_old_audio_files(directory, max_age_seconds=3600):
     current_time = time.time()
@@ -66,53 +73,60 @@ def cleanup_old_audio_files(directory, max_age_seconds=3600):
                 os.remove(file_path)
 
 def image_analysis(image, prompt):
-    pil_image = Image.open(io.BytesIO(image))
-    img_byte_arr = io.BytesIO()
-    pil_image.save(img_byte_arr, format='JPEG')
-    bytes_data = img_byte_arr.getvalue()
-
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
-    response = model.generate_content(
-        glm.Content(
-            parts=[
-                glm.Part(text=prompt +  "\n\nProvide your response in plain text format without any markdown, formatting, or special characters."),
-                glm.Part(inline_data=glm.Blob(mime_type='image/jpeg', data=bytes_data)),
-            ],
-        ),
-        stream=True
-    )
-    response.resolve()
-    return response.text
+    if not API_KEY:
+        return {"error": "API Key is not set"}
+    
+    model = genai.GenerativeModel('gemini-pro-vision')
+    
+    try:
+        response = model.generate_content(
+            contents=[
+                {
+                    "role": "user",
+                    "parts": [
+                        {"text": prompt},
+                        {"inline_data": {"mime_type": "image/jpeg", "data": base64.b64encode(image).decode()}}
+                    ]
+                }
+            ]
+        )
+        return response.text
+    except Exception as e:
+        print(f"Error in image_analysis: {str(e)}")
+        return f"An error occurred while processing your request: {str(e)}"
 def ai_chef_analysis(image):
-    pil_image = Image.open(io.BytesIO(image))
-    img_byte_arr = io.BytesIO()
-    pil_image.save(img_byte_arr, format='JPEG')
-    bytes_data = img_byte_arr.getvalue()
-
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    if not API_KEY:
+        return {"error": "API Key is not set"}
+    
+    model = genai.GenerativeModel('gemini-pro-vision')
     chef_prompt = (
-        "Analyze this image and identify the ingredients present.   "
-        "Then, suggest 3 dishes that can be made using these ingredients. + \n\n "
-        "Format your response as follows: + \n\n"
-        "Ingredients: [List of identified ingredients]"
-        "Suggested Dishes:"
-        "1. [Dish name]: [Brief description] + \n\n"
-        "2. [Dish name]: [Brief description] + \n\n"
-        "3. [Dish name]: [Brief description] + \n\n"
-        "Give the process of making step by step" + "\n\nProvide your response in plain text format without any markdown, formatting, or special characters."
+        "Analyze this image and identify the ingredients present. "
+        "Then, suggest 3 dishes that can be made using these ingredients. "
+        "Format your response as follows:\n\n"
+        "Ingredients: [List of identified ingredients]\n"
+        "Suggested Dishes:\n"
+        "1. [Dish name]: [Brief description]\n"
+        "2. [Dish name]: [Brief description]\n"
+        "3. [Dish name]: [Brief description]\n"
+        "Give the process of making step by step"
     )
     
-    response = model.generate_content(
-        glm.Content(
-            parts=[
-                glm.Part(text=chef_prompt),
-                glm.Part(inline_data=glm.Blob(mime_type='image/jpeg', data=bytes_data)),
-            ],
-        ),
-        stream=True
-    )
-    response.resolve()
-    return response.text
+    try:
+        response = model.generate_content(
+            contents=[
+                {
+                    "role": "user",
+                    "parts": [
+                        {"text": chef_prompt},
+                        {"inline_data": {"mime_type": "image/jpeg", "data": base64.b64encode(image).decode()}}
+                    ]
+                }
+            ]
+        )
+        return response.text
+    except Exception as e:
+        print(f"Error in ai_chef_analysis: {str(e)}")
+        return f"An error occurred while processing your request: {str(e)}"
 def translate_text(text, target_language):
     translator = Translator()
     translated = translator.translate(text, dest=target_language)
@@ -327,14 +341,25 @@ def language_translation():
     return render_template('language_translation.html')
 
 def summarize_video_transcript(transcript):
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
-    prompt = f"zSummarize the following video transcript:\n\n{transcript}"
-    response = model.generate_content(
-        glm.Content(parts=[glm.Part(text=prompt)]),
-        stream=True
-    )
-    response.resolve()
-    return response.text
+    if not API_KEY:
+        return {"error": "API Key is not set"}
+    
+    model = genai.GenerativeModel('gemini-pro')
+    prompt = f"Summarize the following video transcript:\n\n{transcript}\n\nProvide a concise summary highlighting the main points and key takeaways."
+    
+    try:
+        response = model.generate_content(
+            contents=[
+                {
+                    "role": "user",
+                    "parts": [{"text": prompt}]
+                }
+            ]
+        )
+        return response.text
+    except Exception as e:
+        print(f"Error in summarize_video_transcript: {str(e)}")
+        return f"An error occurred while summarizing the transcript: {str(e)}"
 
 @app.route('/video-summarization', methods=['GET', 'POST'])
 def video_summarization():
