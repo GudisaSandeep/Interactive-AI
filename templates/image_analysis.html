@@ -12,63 +12,95 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
         #response {
-            background-color: #1f1f1f;
-            /* Dark background for better visibility */
-            color: #e0e0e0;
-            /* Light text color */
+            background-color: #333;
+            color: #ddd;
             border-radius: 5px;
-            /* Rounded corners */
             padding: 15px;
-            /* Padding for spacing */
             white-space: pre-wrap;
-            /* Preserves whitespace and wraps text */
             max-width: 100%;
-            /* Ensures text fits within container */
             word-wrap: break-word;
-            /* Handles long words without breaking layout */
             overflow-wrap: break-word;
-            /* Ensures long text wraps properly */
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.4em;
+        }
+
+        @media (max-width: 768px) {
+            .form-control {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 10px;
+            }
+
+            #response {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 
-<body class="bg-black text-white font-sans">
+<body>
 
     <!-- Header -->
-    <header class="flex justify-between items-center p-4">
-        <div class="flex items-center">
-            <a href="{{ url_for('home') }}">
-                <img alt="Logo" class="mr-2" height="40"
-                    src="{{ url_for('static', filename='Images/Interactive AI.png') }}" width="40"
-                    style="border-radius: 50px;" />
-            </a>
-            <span class="text-lg">Interactive AI</span>
+    <header class="bg-gray-900 text-gray-300 py-4 px-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="{{ url_for('home') }}">
+                    <img alt="Logo" class="mr-2" height="40" src="{{ url_for('static', filename='Images/UNI-AI.png') }}"
+                        width="40" style="border-radius: 50px;" />
+                </a>
+                <span class="text-lg font-semibold">UNI-AI</span>
+            </div>
+            <nav class="flex space-x-4">
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('home') }}">Home</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image
+                    Analysis</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language
+                    Translation</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('video_summarization') }}">Video
+                    Summarization</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('content_generator') }}">AI Content
+                    Generator</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive
+                    AI</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
+                <a class="text-gray-300 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
+            </nav>
         </div>
-        <nav class="flex space-x-4">
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
-                Summarization</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
-        </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="container mt-5 flex justify-center">
+    <main class="container mx-auto my-5 p-6">
         <div class="text-center">
-            <h1 class="text-4xl font-bold mb-4">Image Analysis</h1>
+            <h1 class="text-4xl font-bold mb-6">Image Analysis</h1>
             <form id="image-analysis-form" method="post" enctype="multipart/form-data"
-                class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-                <div class="form-group">
+                class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="form-group mb-4">
                     <label for="image" class="block text-lg font-semibold">Upload an image:</label>
                     <input type="file" class="form-control-file mt-2" id="image" name="image" required
                         onchange="previewImage(event)">
@@ -85,14 +117,20 @@
                     </button>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-4">
                     <label for="prompt" class="block text-lg font-semibold">Enter a prompt:</label>
                     <input type="text" class="form-control text-center" id="prompt" name="prompt" required>
                 </div>
 
-                <button type="submit" class="btn btn-success mt-3 w-full">Analyze</button>
+                <button type="submit" class="btn btn-success w-full">Analyze</button>
             </form>
 
+            <!-- Spinner and Response -->
+            <div id="spinner" class="mt-4 hidden text-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
             <div id="response" class="mt-4"></div>
         </div>
     </main>
@@ -121,67 +159,61 @@
         $('#image-analysis-form').on('submit', function (event) {
             event.preventDefault();
             var formData = new FormData(this);
+            $('#spinner').removeClass('hidden'); // Show spinner
             $.ajax({
                 url: '/image-analysis',
                 type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
-                dataType: 'text', // Expecting a plain text response
+                dataType: 'text',
                 success: function (data) {
-                    // Directly display the response as plain text
                     $('#response').text('Analysis Result:\n' + data);
                 },
                 error: function (xhr, status, error) {
                     $('#response').text('Error: ' + error);
+                },
+                complete: function () {
+                    $('#spinner').addClass('hidden'); // Hide spinner
                 }
             });
         });
     </script>
 
     <!-- Footer -->
-<footer class="bg-gray-900 text-gray-400 py-12">
-    <div class="container mx-auto text-center">
-        <!-- Company Description -->
-        <p class="mb-6 text-lg font-light text-gray-300">
-            &copy; 2024 We are learning and building innovative AI Tools to shape the future.
-        </p>
+    <footer class="bg-gray-900 text-gray-400 py-6">
+        <div class="container mx-auto text-center">
+            <!-- Company Description -->
+            <p class="mb-6 text-lg font-light">
+                &copy; 2024 We are learning and building innovative AI Tools to shape the future.
+            </p>
 
-        <!-- Links Section -->
-        <div class="flex justify-center space-x-8 mb-6">
-            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Support Our Work</a>
-            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Contact Us</a>
-        </div>
+            <!-- Links Section -->
+            <div class="flex justify-center space-x-8 mb-6">
+                <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Support Our Work</a>
+                <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Contact Us</a>
+            </div>
 
-        <!-- Social Media Icons -->
-        <div class="flex justify-center space-x-6 mb-8">
-            <a href="#" aria-label="Facebook" class="hover:text-white transition duration-300">
-                <i class="fab fa-facebook text-xl"></i>
-            </a>
-            <a href="#" aria-label="Twitter" class="hover:text-white transition duration-300">
-                <i class="fab fa-twitter text-xl"></i>
-            </a>
-            <a href="#" aria-label="LinkedIn" class="hover:text-white transition duration-300">
-                <i class="fab fa-linkedin text-xl"></i>
-            </a>
-            <a href="#" aria-label="GitHub" class="hover:text-white transition duration-300">
-                <i class="fab fa-github text-xl"></i>
-            </a>
-        </div>
+            <!-- Social Media Icons -->
+            <div class="flex justify-center space-x-6 mb-8">
+                <a href="#" aria-label="Facebook" class="hover:text-white transition duration-300">
+                    <i class="fab fa-facebook text-xl"></i>
+                </a>
+                <a href="#" aria-label="Twitter" class="hover:text-white transition duration-300">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="#" aria-label="LinkedIn" class="hover:text-white transition duration-300">
+                    <i class="fab fa-linkedin text-xl"></i>
+                </a>
+            </div>
 
-        <!-- Developer Profile -->
-        <div class="flex justify-center items-center space-x-6">
-            <img src="{{ url_for('static', filename='Images/Deveveloper.jpg') }}" alt="Sandeep Gudisa"
-                class="w-32 h-32 rounded-full border-4 border-gray-600 shadow-lg">
-            <div class="text-left">
-                <p class="text-white text-lg font-semibold">Sandeep Gudisa</p>
-                <p class="text-gray-400 text-sm">Enthusiastic Student Developer specializing in AI, ML, DL, and
-                    innovative solutions.</p>
-                <a href="https://www.linkedin.com/in/sandeep-gudisa/" class="text-blue-400 hover:underline text-sm">View Profile</a>
+            <!-- Developer Info -->
+            <div class="text-center">
+                <p class="text-sm">Developed by Sandeep Gudisa</p>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
+
 </body>
 
 </html>
