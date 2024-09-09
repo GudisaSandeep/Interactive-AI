@@ -429,9 +429,13 @@ def code_generator():
     if request.method == 'POST':
         code_request = request.form['code_request']
         language = request.form['language']
-        prompt = f"Generate {language} code for: {code_request}"
+        prompt = f"Generate {language} code for: {code_request}\n\nProvide only the code without any explanations or markdown formatting."
         generated_code = text_chat(prompt)
-        return jsonify(generated_code)
+        
+        # Extract the code from the Assistant's response
+        code = generated_code['Assistant'].strip()
+        
+        return jsonify({"code": code})
     return render_template('code_generator.html')
 @app.route('/TTS', methods=['GET', 'POST'])
 def TTS():
