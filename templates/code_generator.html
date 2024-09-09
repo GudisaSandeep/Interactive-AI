@@ -1,15 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive AI - Sci-Fi Edition</title>
     <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
         style="border-radius: 50%;">
-    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
-        style="border-radius: 50%;">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
 
     <!-- Adding animations for smoother transitions -->
     <style>
@@ -58,7 +70,8 @@
             <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
             <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
             <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
+            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language
+                Translation</a>
             <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
                 Summarization</a>
             <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
@@ -69,13 +82,11 @@
             <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
             <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
         </nav>
-        </header>
     </header>
 
     <div class="container mx-auto p-8 bg-gray-800 rounded-lg shadow-lg mt-8">
         <h1 class="text-4xl font-bold mb-8 text-center text-blue-400">AI Code Generator</h1>
-
-        <form id="codeForm" class="mb-8">
+        <form id="codeForm" action="{{ url_for('code_generator') }}" method="POST" class="mb-8">
             <div class="mb-6">
                 <label for="code_request" class="block text-lg mb-2 text-gray-300">Describe the code you need:</label>
                 <textarea id="code_request" name="code_request" rows="4"
@@ -106,29 +117,57 @@
             <i class="fas fa-spinner fa-spin text-4xl text-blue-400"></i>
         </div>
 
+        <!-- Result container -->
         <div id="result" class="bg-gray-800 p-6 rounded-lg hidden">
             <h2 class="text-2xl font-bold mb-4 text-blue-400">Generated Code:</h2>
-            <pre id="generatedCode" class="whitespace-pre-wrap text-gray-200"></pre>
+            <pre id="generatedCode" class="language-text text-gray-200"><code></code></pre>
+            <button id="copyBtn"
+                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg mt-4">
+                <i class="fas fa-copy mr-2"></i>Copy Code
+            </button>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#codeForm').submit(function (e) {
-                e.preventDefault();
-                $('#loading').removeClass('hidden');
-                $('#result').addClass('hidden');
-                $.ajax({
-                    url: '/code-generator',
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        $('#generatedCode').text(response.Assistant);
-                        $('#result').removeClass('hidden');
-                        $('#loading').addClass('hidden');
-                    }
+                $('#codeForm').submit(function (e) {
+                    e.preventDefault();
+                    $('#loading').removeClass('hidden');
+                    $('#result').addClass('hidden');
+
+                    $.ajax({
+                        url: '/code-generator',
+                        method: 'POST',
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            $('#loading').addClass('hidden');
+                            const language = $('#language').val().toLowerCase();
+                            $('#generatedCode').removeClass('language-text').addClass(`language-${language}`);
+                            $('#generatedCode code').text(response.code); // Use response.code here
+                            Prism.highlightAll();
+                            $('#result').removeClass('hidden');
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            // handle error
+                            $('#loading').addClass('hidden');
+                        }
+                    });
                 });
+
+                // ... (rest of your code)
             });
-        });
     </script>
+
+    <footer class="bg-gray-800 text-gray-400 py-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p class="text-sm mb-2">Made with <i class="fas fa-heart text-red-500"></i> by <a
+                    href="https://github.com/sandeepgudisa" class="text-blue-400 hover:underline">Sandeep Gudisa</a></p>
+            <a href="https://github.com/sandeepgudisa" class="text-gray-400 hover:text-white text-lg">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+    </footer>
 </body>
+
+</html>
