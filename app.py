@@ -46,7 +46,7 @@ def text_chat(text):
     if not API_KEY:
         return {"error": "API Key is not set"}
     
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     prompt = text + "\n\nProvide your response in plain text format without any markdown, formatting, or special characters."
     
     try:
@@ -76,7 +76,7 @@ def image_analysis(image, prompt):
     if not API_KEY:
         return {"error": "API Key is not set"}
     
-    model = genai.GenerativeModel('gemini-pro-vision')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
     try:
         response = model.generate_content(
@@ -98,7 +98,7 @@ def ai_chef_analysis(image):
     if not API_KEY:
         return {"error": "API Key is not set"}
     
-    model = genai.GenerativeModel('gemini-pro-vision')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     chef_prompt = (
         "Analyze this image and identify the ingredients present. "
         "Then, suggest 3 dishes that can be made using these ingredients. "
@@ -344,7 +344,7 @@ def summarize_video_transcript(transcript):
     if not API_KEY:
         return {"error": "API Key is not set"}
     
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     prompt = f"Summarize the following video transcript:\n\n{transcript}\n\nProvide a concise summary highlighting the main points and key takeaways."
     
     try:
