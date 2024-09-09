@@ -4,138 +4,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive AI - Sci-Fi Edition</title>
-    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
-        style="border-radius: 50%;">
+    <title>UNI AI</title>
+    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+        }
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            color: #333;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transform: translateY(-4px);
+        }
+
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        footer img {
+            border: 3px solid #007bff;
+        }
+
+        .social-icons i {
+            color: #007bff;
+        }
+    </style>
 </head>
 
 <body>
-    <header class="flex justify-between items-center p-4">
+    <header class="flex justify-between items-center p-6">
         <div class="flex items-center">
             <a href="{{ url_for('home') }}">
                 <img alt="Logo" class="mr-2" height="40"
                     src="{{ url_for('static', filename='Images/Interactive AI.png') }}" width="40"
-                    style="border-radius: 50px;" />
+                    style="border-radius: 50%;" />
             </a>
-            <span class="text-lg">Interactive AI</span>
+            <span class="text-2xl title">UNI-AI</span>
         </div>
         <nav class="flex space-x-4">
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('home') }}">Home</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('handle_image_analysis') }}">Image
+                Analysis</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('multi_language_translator') }}">Language
+                Translation</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('video_summarization') }}">Video
                 Summarization</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('TTS') }}">Text to Speech</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('ai_chef') }}">AI Chef</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('kids_ai') }}">Kids AI</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('content_generator') }}">AI Content
+                Generator</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('voice_interaction_page') }}">Interactive
+                AI</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('code_generator') }}">Code Generator</a>
+            <a class="text-gray-700 hover:text-blue-600" href="{{ url_for('about_us') }}">About Me</a>
         </nav>
     </header>
 
     <!-- Main Section -->
     <main class="flex flex-col items-center justify-center text-center mt-20">
-        <h1 class="neon-title text-5xl font-bold mb-4">Discover the Future of AI</h1>
-        <p class="text-lg text-gray-400 mb-8">Explore the power of AI with cutting-edge tools for writing,
-            brainstorming,
-            and more</p>
-        <p class="text-lg text-gray-400 mb-8">Follow <span><b>Sandeep Gudisa</b></span> for More AI Things in Future</p>
-
-        <div class="flex space-x-4 mb-16">
-            <a class="glow-button" href="{{ url_for('handle_text_chat') }}">
-                Start now <i class="fas fa-arrow-right"></i>
+        <h1 class="title text-5xl font-bold mb-6">Elevate Your AI Experience</h1>
+        <p class="text-lg text-gray-600 mb-10">Discover sophisticated AI tools crafted for your modern needs.</p>
+        <p class="text-lg text-gray-600 mb-10">
+            <span><i>Follow <b>Sandeep Gudisa</b> to stay updated on future advancements in AI and innovative
+                    technologies.</i></span>
+        </p>
+        <div class="flex space-x-6 mb-16">
+            <a class="btn" href="{{ url_for('handle_text_chat') }}">
+                Get Started
             </a>
-            <a class="glow-button text-white border border-white" href="{{ url_for('home') }}">
-                Explore More <i class="fas fa-arrow-right"></i>
+            <a class="btn border border-blue-600 text-blue-600 bg-white hover:bg-blue-600 hover:text-white"
+                href="{{ url_for('home') }}">
+                Learn More
             </a>
         </div>
 
-        <div class="grid grid-cols-3 gap-6 max-w-4xl">
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('handle_text_chat') }}">
-                Lets AI ChatBot to help you with your daily tasks <i class="fas fa-arrow-right"></i>
+        <div class="grid grid-cols-3 gap-8 max-w-6xl">
+            <a class="card p-6 rounded-lg" href="{{ url_for('handle_text_chat') }}">
+                <h3 class="text-xl font-semibold mb-2">AI ChatBot</h3>
+                <p>Engage with our intelligent AI ChatBot for personalized assistance.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('handle_image_analysis') }}">
-                AI Analyze Your Images <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('handle_image_analysis') }}">
+                <h3 class="text-xl font-semibold mb-2">Image Analysis</h3>
+                <p>Utilize AI to gain insights from your images with precision.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('multi_language_translator') }}">
-                AI Translate Your Text and Voice <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('multi_language_translator') }}">
+                <h3 class="text-xl font-semibold mb-2">Language Translation</h3>
+                <p>Seamlessly translate text and voice in various languages.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('video_summarization') }}">
-                AI Summarize Your Videos <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('video_summarization') }}">
+                <h3 class="text-xl font-semibold mb-2">Video Summarization</h3>
+                <p>Get concise summaries of video content with our advanced tool.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('TTS') }}">
-                AI Generates Speech from Text <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('TTS') }}">
+                <h3 class="text-xl font-semibold mb-2">Text to Speech</h3>
+                <p>Transform text into lifelike speech with our high-quality synthesis.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('ai_chef') }}">
-                AI Help to make dishes with available ingredients <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('ai_chef') }}">
+                <h3 class="text-xl font-semibold mb-2">AI Chef</h3>
+                <p>Receive tailored recipes based on your ingredients.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('kids_ai') }}">
-                AI helps to generate Kids Complete Homework <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('kids_ai') }}">
+                <h3 class="text-xl font-semibold mb-2">Kids AI</h3>
+                <p>Support kids' learning with interactive AI-based homework help.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('content_generator') }}">
-                AI helps to generate Content for your Youtube Channel <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('content_generator') }}">
+                <h3 class="text-xl font-semibold mb-2">Content Generator</h3>
+                <p>Create engaging content effortlessly for your YouTube channel.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('voice_interaction_page') }}">
-                AI Interact with yourself by giving your own voice <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('voice_interaction_page') }}">
+                <h3 class="text-xl font-semibold mb-2">Interactive AI</h3>
+                <p>Experience the future of interactive AI with voice interactions.</p>
             </a>
-            <a class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 card" href="{{ url_for('code_generator') }}">
-                AI Writes code for you <i class="fas fa-arrow-right"></i>
+            <a class="card p-6 rounded-lg" href="{{ url_for('code_generator') }}">
+                <h3 class="text-xl font-semibold mb-2">Code Generator</h3>
+                <p>Generate code snippets quickly with AI assistance.</p>
             </a>
         </div>
     </main>
 
     <!-- Footer -->
-<footer class="bg-gray-900 text-gray-400 py-12">
-    <div class="container mx-auto text-center">
-        <!-- Company Description -->
-        <p class="mb-6 text-lg font-light text-gray-300">
-            &copy; 2024 We are learning and building innovative AI Tools to shape the future.
-        </p>
+    <footer class="bg-white text-gray-600 py-12 mt-16">
+        <div class="container mx-auto text-center">
+            <!-- Company Description -->
+            <p class="mb-6 text-lg font-light text-gray-500">
+                &copy; 2024 Elevating AI with cutting-edge tools and technologies.
+            </p>
 
-        <!-- Links Section -->
-        <div class="flex justify-center space-x-8 mb-6">
-            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Support Our Work</a>
-            <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Contact Us</a>
-        </div>
+            <!-- Links Section -->
+            <div class="flex justify-center space-x-8 mb-6">
+                <a href="#" class="text-sm font-medium hover:text-blue-600 transition duration-300">Support Our Work</a>
+                <a href="#" class="text-sm font-medium hover:text-blue-600 transition duration-300">Contact Us</a>
+            </div>
 
-        <!-- Social Media Icons -->
-        <div class="flex justify-center space-x-6 mb-8">
-            <a href="#" aria-label="Facebook" class="hover:text-white transition duration-300">
-                <i class="fab fa-facebook text-xl"></i>
-            </a>
-            <a href="#" aria-label="Twitter" class="hover:text-white transition duration-300">
-                <i class="fab fa-twitter text-xl"></i>
-            </a>
-            <a href="#" aria-label="LinkedIn" class="hover:text-white transition duration-300">
-                <i class="fab fa-linkedin text-xl"></i>
-            </a>
-            <a href="#" aria-label="GitHub" class="hover:text-white transition duration-300">
-                <i class="fab fa-github text-xl"></i>
-            </a>
-        </div>
+            <!-- Social Media Icons -->
+            <div class="flex justify-center space-x-6 mb-8 social-icons">
+                <a href="#" aria-label="Facebook" class="hover:text-blue-600 transition duration-300">
+                    <i class="fab fa-facebook text-xl"></i>
+                </a>
+                <a href="#" aria-label="Twitter" class="hover:text-blue-600 transition duration-300">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="#" aria-label="LinkedIn" class="hover:text-blue-600 transition duration-300">
+                    <i class="fab fa-linkedin text-xl"></i>
+                </a>
+                <a href="#" aria-label="GitHub" class="hover:text-blue-600 transition duration-300">
+                    <i class="fab fa-github text-xl"></i>
+                </a>
+            </div>
 
-        <!-- Developer Profile -->
-        <div class="flex justify-center items-center space-x-6">
-            <img src="{{ url_for('static', filename='Images/Deveveloper.jpg') }}" alt="Sandeep Gudisa"
-                class="w-32 h-32 rounded-full border-4 border-gray-600 shadow-lg">
-            <div class="text-left">
-                <p class="text-white text-lg font-semibold">Sandeep Gudisa</p>
-                <p class="text-gray-400 text-sm">Enthusiastic Student Developer specializing in AI, ML, DL, and
-                    innovative solutions.</p>
-                <a href="https://www.linkedin.com/in/sandeep-gudisa/" class="text-blue-400 hover:underline text-sm">View Profile</a>
+            <!-- Developer Profile -->
+            <div class="flex justify-center items-center space-x-6">
+                <img src="{{ url_for('static', filename='Images/Deveveloper.jpg') }}" alt="Sandeep Gudisa"
+                    class="w-32 h-32 rounded-full border-4 border-blue-600 shadow-lg">
+                <div class="text-left">
+                    <p class="text-gray-800 text-lg font-semibold">Sandeep Gudisa</p>
+                    <p class="text-gray-600 text-sm">Enthusiastic Student Developer specializing in AI, ML, DL, and
+                        innovative solutions.</p>
+                    <a href="https://www.linkedin.com/in/sandeep-gudisa/"
+                        class="text-blue-600 hover:underline text-sm">View Profile</a>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
-
+    </footer>
 
 </body>
 
