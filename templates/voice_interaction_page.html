@@ -115,16 +115,19 @@
       <script>
           $(document).ready(function () {
               let conversationUpdateInterval;
-
-              $('#startBtn').click(function () {
-                  $.post('/start-voice-interaction', function (data) {
-                      $('#startBtn').prop('disabled', true);
-                      $('#stopBtn').prop('disabled', false);
-                      $('#conversation').append('<p class="text-green-400">' + data.status + '</p>');
+                $('#startBtn').click(function () {
+                    $.post('/start-voice-interaction', function (data) {
+                        if (data.error) {
+                            $('#conversation').append('<p class="text-red-400">' + data.status + '</p>');
+                        } else {
+                            $('#startBtn').prop('disabled', true);
+                            $('#stopBtn').prop('disabled', false);
+                            $('#conversation').append('<p class="text-green-400">' + data.status + '</p>');
+                        }
                     
-                      // Start polling for conversation updates
-                      conversationUpdateInterval = setInterval(updateConversation, 1000);
-                  });
+                        // Start polling for conversation updates
+                        conversationUpdateInterval = setInterval(updateConversation, 1000);
+                    });
               });
 
               $('#stopBtn').click(function () {
@@ -155,7 +158,6 @@
               }
           });
       </script>
-    </script>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 py-12">
