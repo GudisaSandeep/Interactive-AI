@@ -12,5 +12,6 @@ uuid
 elevenlabs
 youtube-transcript-api
 pydantic
+PyAudio
 
 
