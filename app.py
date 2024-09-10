@@ -170,31 +170,35 @@ class VoiceInteraction:
             print(f"Error in text-to-speech: {e}")
 
     def listen_and_respond(self):
-        with sr.Microphone() as source:
-            while self.is_running:
-                try:
-                    audio = self.recognizer.listen(source, timeout=5)
-                    text = self.recognizer.recognize_google(audio)
-                    print(f"Recognized text: {text}")
-                    self.conversation.append({"You": text})
+        try:
+            with sr.Microphone() as source:
+                while self.is_running:
+                    try:
+                        audio = self.recognizer.listen(source, timeout=5)
+                        text = self.recognizer.recognize_google(audio)
+                        print(f"Recognized text: {text}")
+                        self.conversation.append({"You": text})
 
-                    response = self.model.generate_content(
-                        glm.Content(parts=[glm.Part(text=text)]),
-                        stream=True
-                    )
-                    response.resolve()
-                    print(f"AI Response: {response.text}")
-                    self.conversation.append({"Assistant": response.text})
+                        response = self.model.generate_content(
+                            glm.Content(parts=[glm.Part(text=text)]),
+                            stream=True
+                        )
+                        response.resolve()
+                        print(f"AI Response: {response.text}")
+                        self.conversation.append({"Assistant": response.text})
 
-                    asyncio.run(self.text_to_speech_and_play(response.text))
-                except sr.WaitTimeoutError:
-                    continue
-                except sr.UnknownValueError:
-                    print("Could not understand audio")
-                except sr.RequestError as e:
-                    print(f"Request error: {str(e)}")
-                except Exception as e:
-                    print(f"General error: {e}")
+                        asyncio.run(self.text_to_speech_and_play(response.text))
+                    except sr.WaitTimeoutError:
+                        continue
+                    except sr.UnknownValueError:
+                        print("Could not understand audio")
+                    except sr.RequestError as e:
+                        print(f"Request error: {str(e)}")
+                    except Exception as e:
+                        print(f"General error: {e}")
+        except OSError:
+            print("No microphone available. Voice interaction is not supported in this environment.")
+            self.is_running = False
 
     def start(self):
         self.is_running = True
@@ -319,6 +323,8 @@ def ai_chef():
 @app.route('/start-voice-interaction', methods=['POST'])
 def start_voice_interaction():
     voice_interaction.start()
+    if not voice_interaction.is_running:
+        return jsonify({"status": "Voice interaction is not available in this environment.", "error": True})
     return jsonify({"status": "Voice interaction started. Speak now!"})
 
 @app.route('/stop-voice-interaction', methods=['POST'])
