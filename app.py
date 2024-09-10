@@ -150,68 +150,46 @@ async def text_to_speech(text, voice):
 class VoiceInteraction:
     def __init__(self):
         self.is_running = False
-        self.recognizer = sr.Recognizer()
         self.model = genai.GenerativeModel(model_name="gemini-1.5-flash")
         self.conversation = []
 
-    async def text_to_speech_and_play(self, text):
+    async def text_to_speech(self, text):
         try:
             communicate = edge_tts.Communicate(text, "en-US-AriaNeural")
-            audio_path = "output.mp3"
-            await communicate.save(audio_path)
-
-            pygame.mixer.init()
-            pygame.mixer.music.load(audio_path)
-            pygame.mixer.music.play()
-            while pygame.mixer.music.get_busy():
-                pygame.time.Clock().tick(10)
-            pygame.mixer.quit()
+            audio_data = io.BytesIO()
+            async for chunk in communicate.stream():
+                if chunk["type"] == "audio":
+                    audio_data.write(chunk["data"])
+            return audio_data.getvalue()
         except Exception as e:
             print(f"Error in text-to-speech: {e}")
+            return None
 
-    def listen_and_respond(self):
+    async def process_input(self, text):
         try:
-            with sr.Microphone() as source:
-                while self.is_running:
-                    try:
-                        audio = self.recognizer.listen(source, timeout=5)
-                        text = self.recognizer.recognize_google(audio)
-                        print(f"Recognized text: {text}")
-                        self.conversation.append({"You": text})
+            self.conversation.append({"You": text})
 
-                        response = self.model.generate_content(
-                            glm.Content(parts=[glm.Part(text=text)]),
-                            stream=True
-                        )
-                        response.resolve()
-                        print(f"AI Response: {response.text}")
-                        self.conversation.append({"Assistant": response.text})
+            response = self.model.generate_content(
+                glm.Content(parts=[glm.Part(text=text)]),
+                stream=True
+            )
+            response.resolve()
+            print(f"AI Response: {response.text}")
+            self.conversation.append({"Assistant": response.text})
 
-                        asyncio.run(self.text_to_speech_and_play(response.text))
-                    except sr.WaitTimeoutError:
-                        continue
-                    except sr.UnknownValueError:
-                        print("Could not understand audio")
-                    except sr.RequestError as e:
-                        print(f"Request error: {str(e)}")
-                    except Exception as e:
-                        print(f"General error: {e}")
-        except OSError:
-            print("No microphone available. Voice interaction is not supported in this environment.")
-            self.is_running = False
+            audio_data = await self.text_to_speech(response.text)
+            return {"text": response.text, "audio": audio_data}
+        except Exception as e:
+            print(f"Error in process_input: {e}")
+            return {"error": str(e)}
 
     def start(self):
         self.is_running = True
-        self.thread = threading.Thread(target=self.listen_and_respond)
-        self.thread.start()
 
     def stop(self):
         self.is_running = False
-        if hasattr(self, 'thread'):
-            self.thread.join()
 
 voice_interaction = VoiceInteraction()
-
 def process_input(text_input, audio_file, recorded_audio):
     if text_input:
         return translate_and_generate(text_input)
@@ -323,14 +301,55 @@ def ai_chef():
 @app.route('/start-voice-interaction', methods=['POST'])
 def start_voice_interaction():
     voice_interaction.start()
-    if not voice_interaction.is_running:
-        return jsonify({"status": "Voice interaction is not available in this environment.", "error": True})
-    return jsonify({"status": "Voice interaction started. Speak now!"})
+    return jsonify({"status": "Voice interaction started. You can now send text inputs."})
 
 @app.route('/stop-voice-interaction', methods=['POST'])
 def stop_voice_interaction():
     voice_interaction.stop()
     return jsonify({"status": "Voice interaction stopped.", "conversation": voice_interaction.conversation})
+
+@app.route('/process-voice-input', methods=['POST'])
+async def process_voice_input():
+    if not voice_interaction.is_running:
+        return jsonify({"error": "Voice interaction is not started."}), 400
+
+    text_input = request.json.get('text')
+    if not text_input:
+        return jsonify({"error": "No text input provided."}), 400
+
+    result = await voice_interaction.process_input(text_input)
+    
+    if 'error' in result:
+        return jsonify(result), 500
+
+    audio_base64 = base64.b64encode(result['audio']).decode('utf-8') if result['audio'] else None
+
+    return jsonify({
+        "text": result['text'],
+        "audio": audio_base64
+    })
+
+@app.route('/get-audio/<int:conversation_index>', methods=['GET'])
+def get_audio(conversation_index):
+    if conversation_index >= len(voice_interaction.conversation):
+        return jsonify({"error": "Invalid conversation index."}), 400
+
+    entry = voice_interaction.conversation[conversation_index]
+    if "Assistant" not in entry:
+        return jsonify({"error": "No assistant response at this index."}), 400
+
+    text = entry["Assistant"]
+    audio_data = asyncio.run(voice_interaction.text_to_speech(text))
+
+    if audio_data:
+        return send_file(
+            io.BytesIO(audio_data),
+            mimetype="audio/mp3",
+            as_attachment=True,
+            download_name=f"response_{conversation_index}.mp3"
+        )
+    else:
+        return jsonify({"error": "Failed to generate audio."}), 500
 
 @app.route('/voice-interaction', methods=['GET'])
 def voice_interaction_page():
