@@ -4,12 +4,6 @@ FROM python:3.9
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies required for pyaudio
-RUN apt-get update && \
-    apt-get install -y \
-    portaudio19-dev \
-    && rm -rf /var/lib/apt/lists/*
-
 # Upgrade pip
 RUN pip install --upgrade pip
 
@@ -19,8 +13,8 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 7860 available to the world outside this container
-EXPOSE 7860
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
 
 # Define environment variable
 ENV NAME World
