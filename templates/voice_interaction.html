@@ -1,123 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>
-        UNI-AI
-    </title>
-    <link rel="icon" href="{{ url_for('static', filename='Images/Interactive AI.png') }}" type="image/x-icon"
-        style="border-radius: 50%;">
-    <script src="https://cdn.tailwindcss.com">
-    </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Interaction</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
-<body class="bg-black text-white font-sans">
-    <header class="flex justify-between items-center p-4">
-        <div class="flex items-center">
-            <img alt="Logo" class="mr-2" height="40" src="{{ url_for('static', filename='Images/Interactive AI.png') }}"
-                width="40" style="border-radius: 50px;" />
-            <span class="text-lg">
-                UNI-AI
-            </span>
-        </div>
-        <nav class="flex space-x-4">
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('home') }}">Home</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_text_chat') }}">ChatBot</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('handle_image_analysis') }}">Image Analysis</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('multi_language_translator') }}">Language Translation</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('video_summarization') }}">Video
-                Summarization</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('TTS') }}">Text to Speech</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('ai_chef') }}">AI Chef</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('kids_ai') }}">Kids AI</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('content_generator') }}">AI Content Generator</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('voice_interaction_page') }}">Interactive AI</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('code_generator') }}">Code Generator</a>
-            <a class="text-gray-400 hover:text-white" href="{{ url_for('about_us') }}">About Me</a>
-        </nav>
-    </header>
-
+<body>
     <h1>Voice Interaction</h1>
-    <button id="startBtn">Start Voice Interaction</button>
-    <button id="stopBtn" disabled>Stop Voice Interaction</button>
+    <button id="startBtn">Start Interaction</button>
+    <button id="stopBtn" disabled>Stop Interaction</button>
+    <br><br>
+    <input type="text" id="textInput" placeholder="Enter your message" disabled>
+    <button id="sendBtn" disabled>Send</button>
+    <br><br>
     <div id="conversation"></div>
 
     <script>
-        $(document).ready(function() {
-            $('#startBtn').click(function() {
-                $.post('/start-voice-interaction', function(data) {
-                    $('#startBtn').prop('disabled', true);
-                    $('#stopBtn').prop('disabled', false);
-                    $('#conversation').append('<p>' + data.status + '</p>');
-                });
-            });
+        let isRunning = false;
 
-            $('#stopBtn').click(function() {
-                $.post('/stop-voice-interaction', function(data) {
-                    $('#startBtn').prop('disabled', false);
-                    $('#stopBtn').prop('disabled', true);
-                    $('#conversation').append('<p>' + data.status + '</p>');
-                    displayConversation(data.conversation);
-                });
+        $('#startBtn').click(function() {
+            $.post('/start-voice-interaction', function(data) {
+                console.log(data.status);
+                isRunning = true;
+                $('#startBtn').prop('disabled', true);
+                $('#stopBtn').prop('disabled', false);
+                $('#textInput').prop('disabled', false);
+                $('#sendBtn').prop('disabled', false);
             });
+        });
 
-            function displayConversation(conversation) {
-                conversation.forEach(function(entry) {
-                    for (let [speaker, text] of Object.entries(entry)) {
-                        $('#conversation').append('<p><strong>' + speaker + ':</strong> ' + text + '</p>');
+        $('#stopBtn').click(function() {
+            $.post('/stop-voice-interaction', function(data) {
+                console.log(data.status);
+                isRunning = false;
+                $('#startBtn').prop('disabled', false);
+                $('#stopBtn').prop('disabled', true);
+                $('#textInput').prop('disabled', true);
+                $('#sendBtn').prop('disabled', true);
+                displayConversation(data.conversation);
+            });
+        });
+
+        $('#sendBtn').click(function() {
+            const textInput = $('#textInput').val();
+            if (textInput) {
+                $.ajax({
+                    url: '/process-voice-input',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ text: textInput }),
+                    success: function(data) {
+                        console.log(data);
+                        $('#textInput').val('');
+                        displayMessage('You', textInput);
+                        displayMessage('Assistant', data.text);
+                        if (data.audio) {
+                            playAudio(data.audio);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
                     }
                 });
             }
         });
-    </script>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-12">
-        <div class="container mx-auto text-center">
-            <!-- Company Description -->
-            <p class="mb-6 text-lg font-light text-gray-300">
-                © 2024 We are learning and building innovative AI Tools to shape the future.
-            </p>
-    
-            <!-- Links Section -->
-            <div class="flex justify-center space-x-8 mb-6">
-                <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Support Our Work</a>
-                <a href="#" class="text-sm font-medium hover:text-white transition duration-300">Contact Us</a>
-            </div>
-    
-            <!-- Social Media Icons -->
-            <div class="flex justify-center space-x-6 mb-8">
-                <a href="#" aria-label="Facebook" class="hover:text-white transition duration-300">
-                    <i class="fab fa-facebook text-xl"></i>
-                </a>
-                <a href="#" aria-label="Twitter" class="hover:text-white transition duration-300">
-                    <i class="fab fa-twitter text-xl"></i>
-                </a>
-                <a href="#" aria-label="LinkedIn" class="hover:text-white transition duration-300">
-                    <i class="fab fa-linkedin text-xl"></i>
-                </a>
-                <a href="#" aria-label="GitHub" class="hover:text-white transition duration-300">
-                    <i class="fab fa-github text-xl"></i>
-                </a>
-            </div>
-    
-            <!-- Developer Profile -->
-            <div class="flex justify-center items-center space-x-6">
-                <img src="{{ url_for('static', filename='Images/Deveveloper.jpg') }}" alt="Sandeep Gudisa"
-                    class="w-32 h-32 rounded-full border-4 border-gray-600 shadow-lg">
-                <div class="text-left">
-                    <p class="text-white text-lg font-semibold">Sandeep Gudisa</p>
-                    <p class="text-gray-400 text-sm">Enthusiastic Student Developer specializing in AI, ML, DL, and
-                        innovative solutions.</p>
-                    <a href="https://www.linkedin.com/in/sandeep-gudisa/" class="text-blue-400 hover:underline text-sm">View Profile</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+        function displayMessage(role, text) {
+            $('#conversation').append(`<p><strong>${role}:</strong> ${text}</p>`);
+        }
+
+        function displayConversation(conversation) {
+            $('#conversation').empty();
+            conversation.forEach(entry => {
+                const role = Object.keys(entry)[0];
+                const text = entry[role];
+                displayMessage(role, text);
+            });
+        }
+
+        function playAudio(audioBase64) {
+            const audio = new Audio(`data:audio/mp3;base64,${audioBase64}`);
+            audio.play();
+        }
+    </script>
 </body>
 </html>
