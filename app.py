@@ -6,7 +6,6 @@ import google.generativeai as genai
 import google.ai.generativelanguage as glm
 from PIL import Image
 import io
-import speech_recognition as sr
 import edge_tts
 import asyncio
 import pygame
@@ -298,6 +297,10 @@ def ai_chef():
     
     return render_template('AI_Chef.html')
 
+@app.route('/voice-interaction', methods=['GET'])
+def voice_interaction_page():
+    return render_template('voice_interaction_page.html')
+
 @app.route('/start-voice-interaction', methods=['POST'])
 def start_voice_interaction():
     voice_interaction.start()
@@ -351,9 +354,9 @@ def get_audio(conversation_index):
     else:
         return jsonify({"error": "Failed to generate audio."}), 500
 
-@app.route('/voice-interaction', methods=['GET'])
-def voice_interaction_page():
-    return render_template('voice_interaction_page.html')
+@app.route('/get-conversation', methods=['GET'])
+def get_conversation():
+    return jsonify({"conversation": voice_interaction.conversation})
 
 @app.route('/language-translation', methods=['GET', 'POST'])
 def language_translation():
