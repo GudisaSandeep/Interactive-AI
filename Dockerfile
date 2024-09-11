@@ -1,3 +1,4 @@
+# Use an official Python runtime as a parent image
 FROM python:3.9
 # Set the working directory in the container
 WORKDIR /app
@@ -17,4 +18,4 @@ EXPOSE 7860
 # Define environment variable
 ENV NAME World
 # Run app.py when the container launches
-CMD ["python", "app.py"] .
+CMD ["python", "app.py"]
